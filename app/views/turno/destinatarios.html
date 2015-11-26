@@ -1,0 +1,46 @@
+<div class="pull-right">
+	<div ng-show="ocultar">
+	<button class="btn btn-primary" ng-click="nuevo()"><span class="glyphicon glyphicon-plus"></span> Nuevo destinatario</button>
+    <a class="btn btn-info" href="#/turno"><i class="glyphicon glyphicon-list"></i> Volver al listado de turnos</a>
+    </div>
+    <button class="btn btn-danger" ng-show="!ocultar" ng-click="ocultar=!ocultar"><span class="glyphicon glyphicon-remove"></span> Cancelar</button>
+</div>
+<h1 class="text-center">Destinatarios</h1>
+<div class="well" collapse="ocultar">
+	<form role="form" ng-submit="guardar()">
+		<legend ng-show="!destinatario.id">Registro</legend>
+		<legend ng-show="destinatario.id">Editar</legend>
+		<div class="row">
+		<div class="form-group col-md-6">
+			<label for="">Nombre *</label>
+			<input type="text" class="form-control" placeholder="Nombre completo y titulo" ng-model="destinatario.nombre" required mayus>
+		</div>
+		<div class="form-group col-md-6">
+			<label for="">Cargo *</label>
+			<input type="text" class="form-control" placeholder="Cargo del servidor" ng-model="destinatario.cargo" ng-disabled="destinatario.idArea" required mayus>
+		</div>
+		</div>	
+		<button type="submit" class="btn btn-success"><span class="glyphicon glyphicon-floppy-disk"></span> Guardar</button>
+	</form>
+</div>
+<table class="table table-bordered table-hover">
+	<thead>
+		<tr>
+			<th>No</th>
+			<th>Nombre</th>
+			<th>Cargo</th>
+			<th>Acciones</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr ng-repeat="d in destinatarios">
+			<td>{{$index+1	}}</td>
+			<td>{{d.nombre}}</td>
+			<td>{{d.cargo}}</td>
+			<td>
+				<button type="button" class="btn btn-default" title="Editar" ng-click="edit(d)"> <i class="fa fa-pencil"></i></button>
+				<button type="button" class="btn btn-danger" title="Borrar" ng-show="d.idArea=='0'" ng-click="borrar(d.id)"> <i class="fa fa-trash-o"></i></button>
+			</td>
+		</tr>
+	</tbody>
+</table>

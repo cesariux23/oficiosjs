@@ -1,0 +1,61 @@
+<div class="pull-right">
+    <a class="btn btn-info" href="#/emision"><i class="glyphicon glyphicon-list"></i> Volver al listado</a>
+</div>
+<h2 class="text-center">{{tipodoc[doc.tipoDocumento]}} <b>{{doc.numero}}</b></h2>
+
+<div class="well" ng-show="((doc.creacion| dateToISO)>hoy) && !doc.modificacion">
+	<form role="form" ng-submit="guardar()">
+	<legend>Edición</legend>
+	<p class="help-block"> <b>IMPORTANTE:</b> La edición de un documento solo se puede realizar una vez, siempre y cuando no haya transcurrido más de una hora desde su registro.</p>
+	<div class="form-group">
+		<label for="">Asunto *</label>
+		<input type="text" class="form-control" ng-model="doc.asunto" required mayus>
+	</div>
+	<div class="row">
+		<div class="form-group col-md-6">
+		<label for="">Nombre del destinatario *</label>
+		<input type="text" class="form-control"  ng-model="doc.destinatario" required mayus>
+	</div>
+	<div class="form-group col-md-6">
+		<label for="">Cargo del destinatario *</label>
+		<input type="text" class="form-control" ng-model="doc.cargo" required mayus>
+	</div>
+	</div>
+	<div class="row">
+	<div class="form-group col-md-6">
+		<label for="">Descripción *</label>
+		<textarea class="form-control" ng-model="doc.descripcion" required></textarea>
+	</div>
+	<div class="form-group col-md-6">
+		<label for="">Con copia para</label>
+		<textarea class="form-control" ng-model="doc.ccp"></textarea>
+	</div>
+		
+	</div>
+	<div class="form-group">
+		<label for="">Elaboró</label>
+		<input type="text" class="form-control" ng-model="doc.elaboro">
+	</div>
+
+    <div class="form-group" ng-show="!d">
+        <label>Departamento solicitante</label>     
+        <select class="form-control" ng-options="d.id as d.departamento for d in deptos"  ng-model="doc.idDepartamento">
+            <option value="">--- SUBDIRECCIÓN ---</option>
+        </select>        
+    </div>
+
+	
+
+	<button type="submit" class="btn btn-success"><i class="glyphicon glyphicon-floppy-disk"></i> Guardar cambios</button>
+</form>
+</div>
+
+<div class="alert alert-danger" ng-show="doc.modificacion">
+	<h1>El documento ha sido editado.</h1>
+	La edición de documentos emitidos solo es permitida una vez.
+</div>
+
+<div class="alert alert-warning" ng-show="!((doc.creacion| dateToISO)>hoy) && !doc.modificacion">
+	<h1>Tiempo agotado.</h1>
+	La edición de documentos emitidos solo es permitida hasta una hora depués de su registro.
+</div>

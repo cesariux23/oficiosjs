@@ -1,0 +1,26 @@
+<div class="row">
+  <div class="well col-md-6 col-md-offset-3">
+  <form role="form" ng-login-submit="login" autocomplete="on" name="login-form">
+    <fieldset>
+      <legend>Inicio de sesión</legend>
+        <span class="help-block">Por favor ingrese sus datos de acceso</span>
+        <div class="form-group">
+        <label>Username *</label>
+        <input id="login" name="login" class="form-control error" ng-model='user.login' required="required" autoccomplete="on">
+      </div>
+      <div class="form-group">
+        <label >Password *</label>
+        <input id="password" name="password" class="form-control error" type="password" ng-model='user.password' required="required" autocomplete="on">   
+      </div>
+      <div class="form-group">
+        <button class="btn btn-success"> Iniciar sesión</button>
+      </div>
+    </fieldset>
+  </form>
+</div>
+</div>
+
+<form name="login-form" id="login-form" method="post" action="" style="display: none;">
+    <input name="login" id="login-login" type="text">
+    <input name="password" id="login-password" type="password">
+</form>

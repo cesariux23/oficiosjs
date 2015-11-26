@@ -1,0 +1,120 @@
+<div class="pull-left">
+	<h3 class="text-muted">
+		<a ng-click="cambiames(messeleccionado-1)"><i class="glyphicon glyphicon-chevron-left"></i></a>
+		{{meses[messeleccionado]}} {{anio}}
+		<a ng-click="cambiames(messeleccionado+1)"><i class="glyphicon glyphicon-chevron-right"></i></a>
+	</h3>
+</div>
+<div class="pull-right"><a href="#/emision/nuevo" class="btn btn-primary"><span class="glyphicon glyphicon-plus"></span> Registrar</a></div>
+<h2 class="text-center">Documentos emitidos</h2>
+
+<table class="table table-hover table-bordered table-condensed">
+	<thead>
+		<tr>
+			<th width="160px">No.</th>
+			<th width="130px">Tipo</th>
+			<th>Asunto</th>
+			<th>Destinatario</th>
+			<th width="100px">Fecha</th>
+			<th width="130px" class="hidden-print">Acciones</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr ng-repeat="e in emision">
+			<td>
+				{{e.numero}}
+				<div ng-show='!d' class="text-muted">{{(deptos| filter:{id:e.idDepartamento}:true)[0].departamento}}</div>
+				<div ng-show="e.estado>0">
+					<span class="label label-warning" ng-show="e.estado==1">EDITADO</span>
+					<span class="label label-danger" ng-show="e.estado==2">CANCELADO</span>
+				</div>
+			</td>
+			<td>
+				{{tipo[e.tipoDocumento]}} <br>
+				<span class="text-muted">{{tipoe[e.tipoEmision]}}</span>
+				
+			</td>
+			<td>{{e.asunto}}</td>
+			<td>
+				{{e.destinatario}}<br>
+				<i class="text-muted">{{e.cargo}}</i>
+			</td>
+			<td>{{e.fecha | date:"dd/MMMM/yyyy"}}</td>
+			<td class="hidden-print">
+				<button class="btn btn-default" title="Detalles"  data-toggle="modal" data-target="#detalles" ng-click="detalles(e)"> <i class="fa fa-file-o"></i></button>
+				<a href="#/emision/edit/{{e.id}}" class="btn btn-default" title="Corregir" ng-show="e.estado==0 && ((e.creacion| dateToISO)>hoy)"><i class="fa fa-pencil"></i></a>
+				<button class="btn btn-default" title="Cancelar" ng-show="e.estado<2 && validacancelar(hoy,(e.creacion| dateToISO))" data-toggle="modal" data-target="#detalles" ng-click="detalles(e,true)"> <i class="fa fa-times"></i></button>
+			</td>
+		</tr>
+	</tbody>
+</table>
+<div class="alert alert-warning text-center" ng-show="emision.length==0">
+	<h3 ng-show="!filtropendientes"><i class="fa fa-2x fa-files-o"></i><br>Sin documentos registrados en este mes.</h3>
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="detalles" tabindex="-1" role="dialog">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title" id="myModalLabel">
+				{{tipo[doc.tipoDocumento]}} <b>{{doc.numero}}</b>
+					<span class="label label-warning" ng-show="doc.estado==1">EDITADO</span>
+					<span class="label label-danger" ng-show="doc.estado==2">CANCELADO</span>
+				</h4>
+			</div>
+			<div class="modal-body">	
+				Fecha de emisión: <b>{{doc.fecha | date:"dd/MMMM/yyyy"}}</b>
+				<div class="pull-right text-muted"><i>{{tipoe[doc.tipoEmision]}}</i></div>
+				<table class="table table-bordered table-condensed">
+				<tbody>
+					<tr>
+						<th width="100px">Asunto</th>
+						<td>{{doc.asunto}}</td>
+					</tr>
+					<tr >
+						<th >Destinatario</th>
+						<td>
+							{{doc.destinatario}}<br>
+							<i class="text-muted">{{doc.cargo}}</i>
+						</td>
+					</tr>
+					<tr>
+						<th colspan="2">Descripción</th>
+					</tr>
+					<tr>
+						<td colspan="2">{{doc.descripcion}}</td>
+					</tr>
+					<tr>
+						<th colspan="2">CCP:</th>
+					</tr>
+					<tr>
+						<td colspan="2">{{doc.ccp}}</td>
+					</tr>
+					<tr >
+						<th >Elaboró</th>
+						<td>{{doc.elaboro}}</td>
+					</tr>
+					</tbody>
+				</table>
+				<div ng-show="cancelar || doc.estado==2" class="alert alert-warning">
+				Motivo por el cual se cancela el documento:
+				<textarea class="form-control" ng-model="motivo" ng-show="doc.estado<2">
+				</textarea>
+				<div ng-show="doc.estado==2">
+					<b>{{doc.motivocancelacion}}</b>
+				</div>
+				
+					
+				</div>
+
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+				<button type="button" class="btn btn-danger" ng-disabled="!motivo" data-dismiss="modal" ng-show="cancelar" ng-click="cancelardoc(e)">Cancelar documento</button>
+			</div>
+		</div>
+	</div>
+</div>

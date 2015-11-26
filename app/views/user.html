@@ -1,0 +1,85 @@
+<h1 class="text-center">Configuración de la cuenta <b>{{user.username}}</b></h1>
+<div class="well">
+	<form action="" method="POST" role="form">
+		<legend>Información del usuario</legend>
+		<div collapse="isCollapsed">
+			<div ng-show="deptos.length>0 && !user.idDepartamento" class="alert alert-warning">
+				<b>Es importante que seleccione su departamento.</b><br> Si su usuario es de la subdirección haga caso omiso a este aviso.
+			</div>
+		<div class="row">
+		<div class="form-group col-md-6">
+			<label>Nombre</label>
+			<input type="text" id="input" class="form-control" required="required" ng-model="user.nombre">
+		</div>
+
+		<div class="form-group col-md-6">
+			<label>Apellidos</label>
+			<input type="text" id="input" class="form-control" required="required" ng-model="user.apellidos">
+		</div>
+
+		</div>
+		<div class="row">
+		<div class="form-group col-md-6">
+			<label>Àrea</label>
+			<div class="fom-control">{{user.area.area}}</div>
+		</div>
+
+		<div class="form-group col-md-6" ng-show="deptos.length>0">
+			<label>Departamento</label>
+			<select ng-options="d.id as d.departamento for d in deptos" ng-model="user.idDepartamento" class="form-control">
+			<option value="">--- MI USUARIO ES DE LA SUBDIRECCIÓN  Y NO DE UN DEPARTAMENTO ---</option>
+				
+			</select>
+		</div>
+		</div>
+		<p class="help-block" ng-show="deptos.length>0"><b>Importante:</b> Si no aparecierá su departamento por favor notifique a soporte técnico (Ext. 221)</p>
+
+		<div class="form-group">
+				<button type="button" class="btn btn-info" ng-click="continuar()"> <i class="fa fa-arrow-circle-right"></i> Continuar</button>
+			</div>
+		</div>
+
+		<div collapse="!isCollapsed">
+			<div>
+				<b>Nombre:</b> <span class="user-info">{{user.nombre}} {{user.apellidos}}</span><br>
+				<b>Área:</b> {{user.area.area}}<br>
+				<div ng-show="user.idDepartamento">
+					<b>departamento:</b> {{(deptos | filter:{id:user.idDepartamento}:true)[0].departamento }}<br>
+				</div>
+				<br>
+			</div>
+
+			<legend>Cambio de contraseña</legend>
+
+			<div class="alert alert-info" ng-show="!primeruso">
+				<h3>
+				¿Desea cambiar su contraseña actual en este momento?
+					<button type="button" class="btn btn-primary" ng-click="nuevacontra()" ng-show="!contra">Sí</button>
+					<button type="button" class="btn btn-danger" ng-click="nuevacontra()" ng-show="contra">Cancelar</button>
+				</h3>
+			</div>
+
+			<div collapse="!contra">
+				<p class="help-block">Elija una contraseña fácil de recordar, con una longitud minima de <b>5</b> caracteres.</p>
+				<div class="form-group">
+					<label>Ingrese la nueva contraseña</label>
+					<input type="password" class="form-control" ng-model="contra1">
+				</div>
+
+				<div class="form-group">
+					<label>Repita la nueva contraseña</label>
+					<input type="password" class="form-control" ng-model="contra2">
+				</div>
+			</div>
+			<div class="form-group">
+				<button type="button" class="btn btn-info" ng-click="isCollapsed=!isCollapsed" ng-show="!primeruso"> <i class="fa fa-arrow-circle-left"></i> Volver</button>
+				<button type="button" class="btn btn-success" ng-click="fin()"> <i class="fa fa-check"></i>
+				<span ng-show="primeruso"> Actualizar contraseña</span>
+				<span ng-show="!primeruso"> Finalizar</span>
+				</button>
+			</div>
+		</div>
+			
+		</div>
+	</form>
+</div>

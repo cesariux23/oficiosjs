@@ -1,0 +1,55 @@
+#titulo{
+	margin-top: 0;
+}
+
+.turno{
+	font-size: 12px;
+	height: 485px;
+	/*border: 1px black solid;*/
+}
+
+.t1{
+	height: 490px;
+}
+.t2{
+	height: 425px;
+}
+
+.tabla{
+	height: 320px;
+}
+
+.firma{
+	font-size: 10px;
+}
+
+@media print{
+	body{
+        padding-top: 15px;
+    }
+
+	#logo-ivea{
+		display: none;
+	}
+
+	.vale{
+		display: block;
+	}
+
+	table{
+		width: 100%;
+	}
+	table td, table th{
+		font-size: 10px;
+		border: 1px solid #ddd;
+		padding: 3px;
+	}
+
+	table th{
+		border: 2px solid #ddd;
+	}
+}
+
+@page{
+	page-break-before:auto;
+}

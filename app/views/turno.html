@@ -1,0 +1,87 @@
+<div class="pull-right">
+	<a href="#/turno/destinatarios" class="btn btn-success"><span class="glyphicon glyphicon-user"></span> Catálogo de destinatarios</a>
+	<a href="#/turno/nuevo" class="btn btn-primary"><span class="glyphicon glyphicon-plus"></span> Nuevo turno</a>
+</div>
+<h1 class="text-center">Turnos</h1>
+
+
+	<h3 class="text-muted">
+		<a ng-click="cambiames(messeleccionado-1)" class="btn btn-link"><i class="fa fa-chevron-left fa-2x"></i></a>
+		{{meses[messeleccionado]}} {{anio}}
+		<a ng-click="cambiames(messeleccionado+1)" class="btn btn-link"><i class="fa fa-chevron-right fa-2x"></i></a>
+	</h3>
+
+<table class="table table-hover table-bordered table-condensed">
+	<thead>
+		<tr class="well">
+			<th width="100px">No. turno</th>
+			<th width="100px">Fecha de recepción</th>
+			<th width="120px">Número de documento</th>
+			<th>Asunto</th>
+			<th>Remitente</th>
+			<th width="200px">Turnado a</th>
+
+			<th width="140px">Acciones</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr ng-repeat="t in turnos">
+			<td>
+				{{t.turno}}
+				<div ng-show="t.urgente">
+					<span class="label label-danger">URGENTE</span>
+				</div>
+
+				</td>
+			<td>{{t.fechaRecepcion | date:"dd/MMMM/yyyy"}}</td>
+			<td>
+			<span class="text-muted">{{tipo[t.tipoDocumento]}}</span><br>
+				<b>{{t.numeroDoc}}</b><br>
+				{{t.fechaDoc | date:"dd/MMMM/yyyy"}}
+
+
+
+			</td>
+			<td>{{t.asunto}}</td>
+			<td>
+				<b>{{t.remitente}}</b><br>
+				<span class="text-muted">
+				{{t.cargoremitente}}<br>
+				<b>{{t.dependencia}}</b></span>
+			</td>
+			<td>
+				{{t.turnado}}<br>
+
+			</td>
+
+			<td>
+				<a class="btn btn-default" title="Vista previa de impresión" href="#/turno/view/{{t.id}}"> <i class="fa fa-print"></i></a>
+				<a href="#/turno/edit/{{t.id}}" class="btn btn-default" title="Editar"><i class="fa fa-pencil"></i></a>
+				<button class="btn btn-default" title="Borrar"  data-toggle="modal" data-target="#borrar" ng-click="confirmarb(t)"> <i class="glyphicon glyphicon-trash"></i></button>
+			</td>
+			<td ng-show="t.estado==2" class="text-danger">Cancelado</td>
+		</tr>
+	</tbody>
+</table>
+<div class="alert alert-warning text-center" ng-show="turnos.length==0">
+	<h3 ng-show="!filtropendientes"><i class="fa fa-2x fa-files-o"></i><br>Sin turnos registrados en este mes.</h3>
+</div>
+
+<!-- Modal para borrar-->
+        <div class="modal fade" id="borrar" tabindex="-1" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title">Borrar el turno</b></h4>
+                    </div>
+                    <div class="modal-body">
+                        ¿Esta seguro de borrar el registro?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-danger" data-dismiss="modal" ng-click="borrar()">Borrar</button>
+                    </div>
+                </div>
+            </div>
+        </div>

@@ -1,0 +1,124 @@
+<div class="pull-right">
+    <a class="btn btn-info" href="#/emision"><i class="glyphicon glyphicon-list"></i> Volver al listado</a>
+</div>
+<h2 class="text-center">Nuevo documento emitido</h2>
+
+<form role="form" id="emision-form" ng-submit="guardar()">		
+    <div class="form well">
+        <div class="row">
+            <div class="pull-right col-md-8">
+                <div class="form-group col-md-6">	
+                    <label>Tipo de emisión *</label>					
+                    <select class="form-control" ng-model="emision.tipoEmision" ng-options="i as t for (i,t) in tipoemi" required>
+                       <option value="">Seleccione ...</option>
+                   </select>					
+               </div>
+               <div class="form-group col-md-6">	
+                <label>Tipo de documento *</label>					
+                <select class="form-control" ng-model="emision.tipoDocumento" ng-options="i as t for (i,t) in tipodoc" required>
+                   <option value="">Seleccione ...</option>
+               </select>					
+           </div>
+       </div>
+       <div class="ribbon">Fecha de emisión del documento: <strong id="fechad">{{emision.fecha | date:'dd/MMMM/yyyy'}}</strong></div>
+   </div>
+
+   <div class="form-horizontal">
+
+    <div class="form-group">
+        <label class="col-sm-1 control-label">Asunto *</label>				
+        <div class="col-sm-11">
+            <input class="form-control" maxlength="200" ng-model="emision.asunto" type="text" required mayus>					
+
+        </div>
+
+    </div>
+</div>
+
+<div class="panel panel-info">
+    <div class="panel-heading">
+        <b>Destinatarios</b>
+        <div class="pull-right">
+        <label>
+            <input type="checkbox" ng-model="variosd">
+            Generar un número diferente por destinatario
+        </label>
+            
+        </div>
+    </div>
+    <div class="alert alert-warning" ng-show="variosd"><i class="fa fa-3x fa-files-o"></i> Se generará un número de oficio diferente por cada destinatario.</div>
+    <div class="alert alert-warning" ng-show="!variosd"><i class="fa fa-3x fa-file-o"></i> Se generará solo un numero de oficio para todos los destinatarios de la lista.</div>
+    <div class="alert alert-danger" ng-show="notienedestinatario">Ingrese un destinatario.</div>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th width="25px">#</th>
+                <th>Nombre *</th>
+                <th>Cargo *</th>
+                <th width="70px"></th>
+            </tr>
+        </thead>
+        <tbody id="destinatarios">
+            <tr>
+                <td></td>
+                <td>
+                    <input class="form-control" maxlength="50" ng-model='destinatario.nombre' type="text" ng-change="validadestinatario(destinatario)" mayus>					
+                </td>
+                <td>
+                    <input class="form-control" maxlength="50" ng-model='destinatario.cargo' type="text" ng-change="validadestinatario(destinatario)" mayus>										
+                </td>
+                <td><button type="button" class="btn btn-primary" ng-click="agregadestinatario(destinatario)" title="Agregar"><i class="glyphicon glyphicon-plus"></i></button></td>
+            </tr>
+
+            <tr ng-repeat="d in destinatarios">
+                <td>{{$index + 1}}</td>
+                <td>{{d.nombre}}</td>
+                <td>{{d.cargo}}</td>
+                <td><button class="btn btn-danger" type="button" ng-click="eliminardestinatario($index)" title="Borrar destinatario"><span class="fa fa-trash-o"></span></button></td>
+            </tr>
+        </tbody>
+
+
+    </table>
+</div>
+
+<div class="row">
+
+    <div class="form-group col-md-6">
+        <label>Descripción breve *</label>				
+        <textarea class="form-control" rows="3" cols="50" ng-model="emision.descripcion" required></textarea>				
+    </div>
+
+    <div class="form-group col-md-6">
+        <label>Con copia para</label>				
+        <textarea class="form-control" rows="3" cols="50" ng-model="emision.ccp"></textarea>				
+    </div>
+</div>
+
+<div class="form-horizontal">
+    <div class="form-group">
+        <label class="col-sm-1 control-label">Elaboró</label>				
+        <div class="col-sm-11">
+            <input class="form-control" maxlength="50" ng-model="emision.elaboro" type="text">					
+        </div>
+    </div>
+</div>
+<div class="form-horizontal" ng-show="!d">
+    <div class="form-group">
+        <label class="col-sm-3 control-label">Departamento solicitante</label>     
+        <div class="col-sm-9">
+            <select class="form-control" ng-options="d.id as d.departamento for d in deptos"  ng-model="emision.idDepartamento">
+                <option value="">--- SUBDIRECCIÓN ---</option>
+            </select>        
+        </div>
+    </div>
+</div>
+
+<div class="form-group">
+    <div class="pull-right text-muted"><b>*</b> Campos obligatorios <br><b>Nota:</b> Los números de oficios son generados después de guardar el registro.</div>
+    <button type="submit" class="btn btn-success"><i class="glyphicon glyphicon-floppy-disk"></i> Registrar documento</button>
+    <a class="btn btn-default" href="#/emision"><i class="glyphicon glyphicon-remove"></i> Cancelar</a>
+</div>
+</div><!-- form -->
+
+</form>

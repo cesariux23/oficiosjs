@@ -1,0 +1,105 @@
+<div class="pull-right">
+	<button class="btn btn-info" ng-show="!mostrarpanel" ng-click="mostrarpanel=true"><i class="fa fa-pencil"></i> Modificar busqueda</button>
+</div>
+<h1>Busqueda</h1>
+<div class="well" ng-show="mostrarpanel">
+	<legend>Ingrese alguno de los siguientes datos del documento a buscar.</legend>
+	<p class="help-block">Se puede ingresar valores parciales.</p>
+	<div class="row">
+		<div class="form-group col-md-6">
+			<label>Número de documento</label>
+			<input type="text" class="form-control" ng-model="b.numero">
+		</div>
+		<div class="form-group col-md-3">	
+	        <label>Tipo de documento</label>					
+	        <select class="form-control" ng-model="b.tipo" ng-options="i as t for (i,t) in tipodoc">
+	        	<option value="">--  CUALQUIER TIPO  --</option>
+	        </select>
+	    </div>
+		<div class="form-group col-md-3">	
+	        <label>AÑO</label>					
+	        <select class="form-control" ng-model="b.anio" ng-options="a for a in anios">
+	        	<option value="">--  CUALQUIER AÑO  --</option>
+	        </select>
+	    </div>
+	</div>
+	
+	<div class="row">
+		<div class="form-group col-md-6">
+			<label>Asunto</label>
+			<input type="text" class="form-control" ng-model="b.asunto">
+		</div>
+		<div class="form-group col-md-6">
+			<label>Descripción</label>
+			<input type="text" class="form-control" ng-model="b.descripcion">
+		</div>
+	</div>
+	
+	<div class="row">
+		<div class="form-group col-md-4">
+			<label>Destinatario</label>
+			<input type="text" class="form-control" ng-model="b.destinatario">
+		</div>
+		<div class="form-group col-md-4">
+			<label>cargo del destinatario</label>
+			<input type="text" class="form-control" ng-model="b.cargo">
+		</div>
+		<div class="form-group col-md-4">
+			<label>CCP</label>
+			<input type="text" class="form-control" ng-model="b.ccp">
+		</div>
+	</div>
+	<button type="button" class="btn btn-success" ng-click="buscar()" ng-disabled="!b.numero && !b.asunto && !b.descripcion && !b.destinatario && !b.cargo && !b.ccp"><i class="fa fa-search"></i> Buscar</button>
+</div>
+<div ng-show="!mostrarpanel">
+	<h3 class="text-muted text-center">Resultados de la busqueda</h3>
+	<div class="well">
+		<p>Buscando el siguiente documento:</p>
+		<span><b>TIPO</b>: <span ng-show='b.tipo>=0'>{{tipodoc[b.tipo]}}</span><span ng-show='!b.tipo'>CUALQUIER TIPO</span></span><br>
+		<span ng-show="!b.anio"><b>AÑO</b>: CUALQUIER AÑO</span>
+		<div ng-repeat='(key, prop) in b track by key'>
+        <span ng-show="prop && key!='tipo' && key!='area'" style="text-transform:uppercase;"><b ng-show="key!='anio'">{{key}}</b> <b ng-show="key=='anio'">año</b>: <span>{{prop}}</span></span>
+    </div>
+	</div>
+	<div class="alert alert-warning text-center" ng-show="resultados.total==0">
+		<i class="fa fa-3x fa-search"></i>
+		<h2>No se encontraron resultados.</h2>
+		<p>Especifique un poco más su busqueda.</p>
+	</div>
+	<div class="alert alert-warning" ng-show="resultados.total>0"><i class="fa fa-2x fa-files-o"></i> se encontraron <b>{{resultados.total}}</b> documentos.
+	<p ng-show='resultados.total>30'> Se encontraron demasiados resultados, solo se muestran los primeros <b>30</b> documentos.</p>
+	</div>
+	<table class="table" ng-show="resultados.total>0">
+		<thead>
+			<tr>
+				<th>#</th>
+				<th>Fecha de emisión</th>
+				<th>Número de documento</th>
+				<th>Asunto</th>
+				<th>Descripción</th>
+				<th>Estado</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr ng-repeat="r in resultados.documentos">
+				<td>{{$index+1}}</td>
+				<td>
+					{{r.fecha | date:"dd/MMMM/yyyy"}}<br>
+					<span class="label label-success" ng-show="r.estado==0">Valido</span>
+					<span class="label label-warning" ng-show="r.estado==1">Editado</span>
+					<span class="label label-danger" ng-show="r.estado==2">Cancelado</span>
+				</td>
+				<td>
+					{{tipodoc[r.tipoDocumento]}}<br>
+					{{r.numero}}
+				</td>
+				<td>{{r.asunto}}</td>
+				<td>{{r.descripcion}}</td>
+				<td>
+					{{r.destinatario}}<br>
+					<span class="text-muted">{{r.cargo}}</span>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+</div>

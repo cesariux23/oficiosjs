@@ -1,0 +1,122 @@
+<link rel="stylesheet" type="text/css" href="styles/turno.css" />
+<div class="pull-right hidden-print">
+	<button type="button" class="btn btn-primary"  ng-click="print()"><i class="fa fa-print"></i> Imprimir</button>
+	<a class="btn btn-warning" href="#/turno/edit/{{turno.id}}"><i class="glyphicon glyphicon-edit"></i> Editar</a>
+    <a class="btn btn-info" href="#/turno"><i class="glyphicon glyphicon-list"></i> Volver al listado</a>
+</div>
+
+
+<h1 class="hidden-print text-center">Vista previa de impresión</h1>
+
+
+    <div id='titulo' class='visible-print'>
+        DIRECCIÓN GENERAL<br/>
+        <strong>CORRESPONDENCIA DE LA C. DIRECTORA</strong><br/>
+        <span>UNIDAD DE DOCUMENTACIÓN Y SEGUIMIENTO</span>
+    </div>
+    <br/><div id="urgente" ng-show="turno.urgente">
+    URGENTE
+</div>
+
+<div id="turno">
+    <table>
+        <thead>
+            <tr>
+                <td>TURNO:</td>
+                <td>FECHA:</td>
+                <td>No. DOCUMENTO:</td>
+                <td>FECHA DEL DOCUMENTO:</td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>{{ turno.turno}}</td>
+                <td>{{turno.fechaRecepcion |date:"dd/MMMM/yyyy"}}</td>
+                <td>{{ turno.numeroDoc}}</td>
+                <td>{{turno.fechaDoc |date:"dd/MMMM/yyyy"}}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<br/>
+<table>
+    <tr>
+        <td class="colizq" rowspan="6">
+            <strong>ENVÍA</strong>
+        </td>
+    </tr>
+    <tr class="negritas">
+        <td>NOMBRE:</td>
+        <td>CARGO:</td>
+    </tr>
+    <tr>
+        <td>{{ turno.remitente}}</td>
+        <td>{{ turno.cargoremitente}}</td>
+    </tr>
+    <tr class="negritas">
+        <td>DEPENDENCIA:</td>
+        <td>ESTADO:</td>
+    </tr>
+    <tr>
+        <td>{{ turno.dependencia}}</td>
+        <td>{{ turno.estado}}</td>
+    </tr>
+</table>
+<table>
+    <tr>
+        <td class="colizq" rowspan="3">
+            <strong>TURNADO A</strong>
+        </td>
+    </tr>
+    <tr>
+        <th>NOMBRE:</th>
+        <td>{{ turno.turnado}}</td>
+
+    </tr>
+    <tr>
+        <th>CARGO:</th>
+        <td>{{ turno.cargoturnado}}</td>
+    </tr>
+</table>
+<div>
+    <strong>ASUNTO:</strong>
+    <p id="asunto">{{turno.asunto}}</p>
+</div>
+
+<div>
+    <strong>INDICACIÓN:</strong>
+    <p>{{turno.indicacion}}</p>
+</div>
+
+<div>
+    <span class="negritas">COMENTARIOS Y OBSERVACIONES:</span>
+    <p id="comentarios">{{turno.observaciones}}</p>
+</div>
+<table id="detalles">
+    <thead>
+        <tr>
+            <td>RECIBIDO VÍA:</td>
+            <td>FECHA DE TURNO:</td>
+            <td>LÍMITE DE TRÁMITE:</td>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>{{via[turno.via]}}</td>
+            <td>{{hoy |date:"dd/MMMM/yyyy"}}</td>
+            <td >{{ turno.limite}}</td>
+        </tr>
+    </tbody>    
+</table>
+<br/>
+<table id="nota">
+    <tr>
+        <td class="negritas">NOTA:</td>
+        <td>AL ATENDER ESTE ASUNTO, DEBERÁ ENVIAR A ESTA UNIDAD COPIA DE LO TRAMITADO, EN UN TERMINO NO MAYOR A 5 DÍAS HÁBILES A PARTIR DE LA FECHA DE RECEPCIÓN DEL PRESENTE, SEÑALANDO EL NUMERO DE FOLIO.</td>        
+    </tr> 
+</table>
+<br/>
+
+<div id="sad" class="visible-print">
+    {{hoy | date:"hh:mm a"}}
+</div>

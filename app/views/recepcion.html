@@ -1,0 +1,406 @@
+<link rel="stylesheet" type="text/css" href="styles/turno-paquete.css" />
+<div class="hidden-print">
+	<div class="pull-right">
+		<div ng-show="isCollapsed">
+			<button type="button" class="btn btn-danger" ng-click="quitar();" ng-show="print.selected.length>0"><span class="fa fa-times"></span> Cerrar</button>
+			<button type="button" class="btn btn-primary" ng-click="nuevo()" ng-show="print.selected.length==0 && !filtropendientes"><span class="glyphicon glyphicon-plus"></span> Registrar </button>
+		</div>
+		<button type="button" class="btn btn-danger" ng-click="isCollapsed = !isCollapsed" ng-show="!isCollapsed"><span class="glyphicon glyphicon-remove"></span> Cancelar</button>
+
+		<button type="button" class="btn btn-info" ng-click="actual()" ng-show="filtropendientes"><span class="glyphicon glyphicon-list"></span> Volver al listado</button>
+
+	</div>
+
+	<h1 class="text-center">Seguimiento de documentación</h1>
+
+	<div class="well" ng-show="print.selected.length>0">
+		<legend>Imprimir</legend>
+		<div class="alert alert-warning">
+			<b>{{print.selected.length}}</b> documentos seleccionados.
+		</div>
+		<div class="row">
+			<div class="form-group col-md-6">
+				<label>Turnado a *</label>
+				<input type="text" class="form-control" required="required" ng-model="pr.turnado" mayus>
+			</div>
+			<div class="form-group col-md-6">
+				<label>Indicación *</label>
+				<input type="text" class="form-control" required="required" ng-model="pr.indicacion" mayus>
+			</div>
+		</div>
+		<button type="button" class="btn btn-success" ng-click="imprimir()" ng-show="print.selected.length>0" ng-disabled="!(pr.indicacion && pr.turnado)"><span class="fa fa-print"></span> Imprimir </button>
+	</div>
+
+	<div collapse="isCollapsed">
+		<div class="well">
+			<form role="form" ng-submit="guardar()">
+				<legend ng-show="!recepcion.id">Registro</legend>
+				<legend ng-show="recepcion.id">Editar</legend>
+				<div class="alert alert-danger" ng-show="error">
+					<div ng-bind-html="error"></div>
+				</div>
+				<div class="pull-right">Fecha de recepción: <b>{{recepcion.fechaRecepcion| date:"dd/MMMM/yyyy hh:mm a"}}</b></div>
+				<div class="row">
+					<div class="form-group col-md-4">
+						<label>Tipo de documento</label>
+						<select class="form-control" ng-model="recepcion.tipoDoc" ng-options="i as t for (i,t) in tipo" required="required" ng-disabled="cargado">
+							<option value="">Seleccione ..</option>
+						</select>
+					</div>
+				</div>
+				<div class="form-group">
+					<label>Número de documento</label>
+					<div class="input-group">
+						<input type="text" class="form-control" required="required" ng-model="recepcion.numero" ng-change="error=''"  ng-disabled="cargado" mayus>
+						<span class="input-group-btn" ng-show="!recepcion.id">
+							<button type="button" class="btn btn-success" ng-click="cargar()" ng-show="!cargado"><i class="fa fa-search"></i> Cargar información de un documento interno</button>
+							<button type="button" class="btn btn-danger" ng-click="limpiar()" ng-show="cargado"><i class="fa fa-times"></i> Limpiar</button>
+						</span>
+					</div>
+					<span class="text-muted"><b>Nota:</b> Los documentos internos son todos aquellos emitidos por cualquier área de Dirección General así como los turnos de correspondecia.</span>
+				</div>
+				<legend>Información del documento</legend>
+				<div class="row">
+					<div class="form-group col-md-4">
+						<label>Fecha del documento *</label>
+						<input type="text" class="form-control" datepicker-popup="dd/MMMM/yyyy" ng-model="recepcion.fechaDocumento" is-open="opened" max='{{max}}' datepicker-options="dateOptions" close-text="Cerrar" show-weeks="false" show-button-bar='false' required="required" ng-disabled="cargado"/>
+					</div>
+				</div>
+				<div class="row">
+					<div class="form-group col-md-4">
+						<label>Envía *</label>
+						<input type="text" class="form-control" required="required" ng-model="recepcion.envia" ng-disabled="turno" mayus>
+					</div>
+					<div class="form-group col-md-4">
+						<label>Cargo *</label>
+						<input type="text" class="form-control" required="required" ng-model="recepcion.cargo" ng-disabled="turno" mayus>
+					</div>
+
+					<div class="form-group col-md-4">
+						<label>Dependencia</label>
+						<input type="text" class="form-control"  ng-model="recepcion.dependencia" ng-disabled="cargado" mayus>
+					</div>
+				</div>
+				<div class="form-group">
+					<label>Asunto *</label>
+					<input type="text" class="form-control" required="required" ng-model="recepcion.asunto" ng-disabled="cargado" mayus>
+				</div>
+				<div class="row" ng-show="turno">
+					<legend>
+						Información del turno
+					</legend>
+					<div class="form-group col-md-3">
+						<label>Fecha del turno</label>
+						<input type="text" class="form-control" ng-model="recepcion.fechaTurno" ng-disabled="turno">
+					</div>
+					<div class="form-group col-md-3">
+						<label>No. de turno</label>
+						<input type="text" class="form-control" ng-model="recepcion.turno" ng-disabled="turno">
+					</div>
+					<div class="form-group col-md-6">
+						<label>Indicación del turno</label>
+						<input type="text" class="form-control" ng-model="recepcion.indicaciont" ng-disabled="turno">
+					</div>
+				</div>
+				<h3 ng-show="recepcion.urgente">
+					<span class="label label-danger">URGENTE</span>
+				</h3>
+
+				<div class="form-group">
+					<button type="submit" class="btn btn-success"><span class="glyphicon glyphicon-ok"></span> Guardar</button>
+
+				</div>
+			</form>
+		</div>
+	</div>
+	<div ng-show="isCollapsed">
+		<div class="panel panel-default">
+		  <div class="panel-heading">
+		    <h3 class="panel-title text-center">Días trascurridos sin atención / Número de documentos pendientes</h3>
+		  </div>
+			<table class="table table-bordered table-condensed text-center">
+				<tbody>
+					<tr>
+						<td>
+							<br>
+							0 a 20 días
+						</td>
+						<td ng-show='concentrado.uno>0'>
+							<button type="button" class="btn btn-sm btn-success btn-lg" ng-click="pendientes(1)">{{concentrado.uno}}</button>
+						</td>
+						<td ng-show='concentrado.uno==0'>
+							<button type="button" class="btn btn-success btn-lg" disabled="">
+								0
+							</button>
+						</td>
+						<td>
+							<br>
+							21 a 30 días
+						</td>
+						<td ng-show='concentrado.dos>0'>
+							<button type="button" class="btn btn-sm btn-warning btn-lg" ng-click="pendientes(2)">{{concentrado.dos}}</button>
+						</td>
+						<td ng-show='concentrado.dos==0'>
+							<button type="button" class="btn btn-warning btn-lg" disabled="">
+								0
+							</button>
+						</td>
+						<td>
+							<br>
+							31 a 45 días o más
+						</td>
+						<td ng-show='concentrado.tres>0'>
+							<button type="button" class="btn btn-danger btn-lg" ng-click="pendientes(3)">{{concentrado.tres}}</button>
+						</td>
+						<td ng-show='concentrado.tres==0'>
+							<button type="button" class="btn btn-danger btn-lg" disabled="">
+								0
+							</button>
+						</td>
+						<td>
+							<br>
+							Todos los documentos
+						</td>
+						<td ng-show='concentrado.todos>0'>
+							<button type="button" class="btn btn-default btn-lg" ng-click="pendientes(4)">{{concentrado.todos}}</button>
+						</td>
+						<td ng-show='concentrado.todos==0'>
+							<button type="button" class="btn btn-default btn-lg" disabled="">
+								0
+							</button>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<div class="text-muted pull-right">
+			<h3 ng-show="!filtropendientes">
+				<a ng-click="cambiames(messeleccionado-1)" class="btn btn-link"><i class="fa fa-chevron-left fa-2x"></i></a>
+				{{meses[messeleccionado]}} {{anio}}
+				<a ng-click="cambiames(messeleccionado+1)" class="btn btn-link"><i class="fa fa-chevron-right fa-2x"></i></a>
+			</h3>
+			<h3 ng-show="filtropendientes">Documentos pendientes</h3>
+		</div>
+		<table class="table table-bordered table-condensed">
+			<thead>
+				<tr class="well">
+					<th>ID</th>
+					<th width="90px">Recepción</th>
+					<th>Remitente</th>
+					<th>Información del documento</th>
+					<th>Información del turno</th>
+					<th width="200px">Turnado a</th>
+					<th>Seguimiento</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="r in recibidos">
+					<td>{{r.id}}</td>
+					<td>{{r.fechaRecepcion | dateToISO | date:"dd/MMMM/yyyy hh:mm a"}}</td>
+					<td>
+						<b>{{r.envia}}</b><br>
+						<span class="text-muted">
+							{{r.cargo}}<br>
+							<b>{{r.dependencia}}</b></span>
+						</td>
+						<td>
+							<span class="text-muted">{{tipo[r.tipoDoc]}} <b>{{r.fechaDocumento | date:"dd/MMMM/yyyy"}}</b></span><br>
+							<b>{{r.numero}}</b><br>
+							{{r.asunto}}
+						</td>
+						<td>
+							<div ng-show="r.turno">
+								Turno: <b>{{r.turno}}</b><br>
+								<i>{{r.indicaciont}}</i>
+								<div ng-show="r.urgente">
+									<span class="label label-danger">URGENTE</span>
+								</div>
+							</div>
+						</td>
+
+						<td ng-show="r.turnado">
+							<div>
+								{{r.turnado}}<br>
+								<b ng-show="r.indicacion">Indicación:</b><br>
+								{{r.indicacion}}
+							</div>
+						</td>
+
+
+						<td ng-show="!r.turnado">
+						<div><span class="label label-default" ng-show="r.estado==0">Sin turnar</span></div>
+							<div class="checkbox">
+
+								<label>
+									<input type="checkbox" checklist-model="print.selected" checklist-value="r">
+									Turnar
+								</label>
+							</div>
+						</td>
+						<td class="text-center">
+							{{periodo((r.fechaRecepcion |dateToISO))}}
+							<div ng-show="r.estado==2">
+								{{r.seguimiento}}
+							</div>
+							<div ng-if="r.estado==1">
+								<button type="button" ng-show="p<25" class="btn btn-success" ng-click="registrarseguimiento(r)"><i class="fa fa-exclamation-triangle"></i> Registrar</button>
+								<button type="button" ng-show="p>=25 && p<45" class="btn btn-warning" ng-click="registrarseguimiento(r)"><i class="fa fa-exclamation-triangle"></i> Registrar</button>
+								<button type="button" ng-show="p>=45" class="btn btn-danger" ng-click="registrarseguimiento(r)"><i class="fa fa-exclamation-triangle"></i> Registrar</button>
+								<p class="help-block"><b>{{p}}</b> dias transcurridos.</p>
+							</div>
+
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			<div class="alert alert-warning text-center" ng-show="recibidos.length==0">
+				<h3 ng-show="!filtropendientes"><i class="fa fa-2x fa-files-o"></i><br>Sin documentos registrados en este mes.</h3>
+				<h3 ng-show="filtropendientes"><i class="fa fa-2x fa-check"></i><br>Se han atendido todos los pendientes.</h3>
+			</div>
+		</div>
+	</div>
+
+	<!-- vales -->
+	<div class="vale visible-print">
+		<img src="images/ivea.jpg" width="150px" class="pull-left">
+
+		<div class="turno">
+			<div class="text-center" id='titulo'>
+				<b>{{area}}</b><br>
+				CORRESPONDENCIA PARA SU ATENCIÓN Y/O SEGUIMIENTO<br>
+				<b>{{hoy | date:"dd/MMMM/yyyy"}}</b>
+			</div>
+			<p></p>
+			<div class="tabla">
+				<table class="table table-bordered">
+					<thead>
+						<tr>
+							<th>ID</th>
+							<th width="75px">Recepción</th>
+							<th>Remitente</th>
+							<th>Información del documento</th>
+							<th>Información del turno</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="r in print.selected">
+							<td>{{r.id}}</td>
+							<td>{{r.fechaRecepcion | dateToISO | date:"dd/MMMM/yyyy hh:mm a"}}</td>
+							<td>
+								<b>{{r.envia}}</b>,<br>
+								{{r.cargo}}<br>
+								{{r.dependencia}}
+							</td>
+							<td>
+								<span class="text-muted">{{tipo[r.tipoDoc]}} <b>{{r.fechaDocumento | date:"dd/MMMM/yyyy"}}</b></span><br>
+								<b>{{r.numero}}</b><br>
+								{{r.asunto}}
+							</td>
+							<td>
+								<div ng-show="r.turno">
+									Turno: <b>{{r.turno}}</b><br>
+									<i>{{r.indicaciont}}</i>
+									<div ng-show="r.urgente">
+										<span class="label label-danger">URGENTE</span>
+									</div>
+								</div>
+							</td>
+						</tr>
+					</tbody>
+
+				</table>
+				<b>Indicación:</b><br>
+				{{pr.indicacion}}
+			</div>
+			<div class="text-center firma">
+				<b>{{pr.turnado}}</b><br>
+				__________________________________________________________<br>
+				Nombre y firma de recibido
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="vale visible-print">
+		<img src="images/ivea.jpg" width="150px" class="pull-left">
+
+		<div class="turno">
+			<div class="text-center" id='titulo'>
+				<b>{{area}}</b><br>
+				CORRESPONDENCIA PARA SU ATENCIÓN Y/O SEGUIMIENTO<br>
+				<b>{{hoy | date:"dd/MMMM/yyyy"}}</b>
+			</div>
+			<p></p>
+			<div class="tabla">
+				<table class="table table-bordered">
+					<thead>
+						<tr>
+							<th>ID</th>
+							<th width="75px">Recepción</th>
+							<th>Remitente</th>
+							<th>Información del documento</th>
+							<th>Información del turno</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="r in print.selected">
+							<td>{{r.id}}</td>
+							<td>{{r.fechaRecepcion | dateToISO | date:"dd/MMMM/yyyy hh:mm a"}}</td>
+							<td>
+								<b>{{r.envia}}</b>,<br>
+								{{r.cargo}}<br>
+								{{r.dependencia}}
+							</td>
+							<td>
+								<span class="text-muted">{{tipo[r.tipoDoc]}} <b>{{r.fechaDocumento | date:"dd/MMMM/yyyy"}}</b></span><br>
+								<b>{{r.numero}}</b><br>
+								{{r.asunto}}
+							</td>
+							<td>
+								<div ng-show="r.turno">
+									Turno: <b>{{r.turno}}</b><br>
+									<i>{{r.indicaciont}}</i>
+									<div ng-show="r.urgente">
+										<span class="label label-danger">URGENTE</span>
+									</div>
+								</div>
+							</td>
+						</tr>
+					</tbody>
+
+				</table>
+				<b>Indicación:</b><br>
+				{{pr.indicacion}}
+			</div>
+			<div class="text-center firma">
+				<b>{{pr.turnado}}</b><br>
+				__________________________________________________________<br>
+				Nombre y firma de recibido
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="detalles" tabindex="-1" role="dialog">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title" id="myModalLabel">
+					Registro de seguimiento
+				</h4>
+			</div>
+			<div class="modal-body">
+			<label>Acciones</label>
+			<textarea ng-model='doc.seguimiento' class="form-control" mayus>
+			</textarea>
+
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+				<button type="button" class="btn btn-success" ng-disabled="!doc.seguimiento" data-dismiss="modal" ng-click="registraracciones()">Registrar</button>
+			</div>
+		</div>
+	</div>
+</div>

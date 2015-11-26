@@ -1,0 +1,117 @@
+'use strict';
+
+angular.module('oficiosApp')
+  .controller('TurnoNuevoCtrl', function ($scope, Turno, Flash, $location, $http, user, $filter) {
+    Flash.clear();
+    //datepiker
+    $scope.isopen=true;
+    $scope.isopen2=true;
+    $scope.max=new Date();
+    $scope.dateOptions = {
+    'year-format': "'yy'",
+    'starting-day': 1
+    };
+    $scope.open = function($event) {
+        $event.preventDefault();
+        $event.stopPropagation();
+        $scope.opened = !$scope.opened;
+    };
+    $scope.open2 = function($event) {
+        $event.preventDefault();
+        $event.stopPropagation();
+        $scope.opened2 =!$scope.opened2;
+    };
+
+    $http.get('ci/index.php/utils/hoy').success(function (data) {
+        //recupera la fecha del servidor
+        var hoy=$filter('dateToISO')(data);
+        $scope.turno={via:0, fechaRecepcion:hoy, fechaDoc:hoy, indicacion:"TOME LA ACCIÓN ADECUADA",estado:'VERACRUZ',idUsuario:user.data.id};
+    });
+     $scope.turnado = undefined;
+     $scope.mostrarpanel=false;
+     $scope.turnados=[];
+    $scope.states = Turno.getall({turnado:true});
+
+    $scope.agregar=function () {
+    	//si es nuevo
+        if($scope.mostrarpanel){
+            if($scope.nuevo.nombre && $scope.nuevo.cargo){
+                $scope.turnados.push(angular.copy($scope.nuevo));
+                $scope.mostrarpanel=false;
+            }
+        }
+        else{
+            if($scope.turnado){
+                if ($scope.turnados.indexOf($scope.turnado)<0) {
+                    $scope.turnados.push($scope.turnado);
+                }
+            }
+           $scope.turnado = undefined;
+           $scope.nuevo={};
+        }
+        
+    	
+    }
+
+    $scope.cambiaturno=function () {
+        if($scope.turno.urgente)
+            $scope.turno.urgente=!$scope.turno.urgente;
+        else
+        $scope.turno.urgente=1;
+    }
+
+    $scope.eliminar=function(i){
+        $scope.turnados.splice(i,1);
+    }
+
+    //metodo que guarda el elemento
+    $scope.guardar=function () {
+        $scope.notienedestinatario=false;
+        //se agrega el turnado
+        $scope.agregar();
+        //se verifica que existan turnados
+        if($scope.turnados.length>0){
+            var d="";
+            var c="";
+            var i=$scope.turnados.length;
+
+            $scope.turnados.forEach(
+                function (t,index) {
+                    // body...
+                    d=d+t.nombre;
+                    c=c+t.cargo;
+                    if(index<(i-1)){
+                        d=d+", ";
+                        c=c+", ";
+                    }
+                }
+                
+            );
+
+            $scope.turno.turnado=d;
+            $scope.turno.cargoturnado=c;
+
+            //se guarda
+            $http.post('ci/index.php/turno',$scope.turno).success(
+                function (data) {
+                    //se notifica
+                    Flash.clear();
+                    Flash.addAlert({type:'success', msg:"Se ha guardado el turno correctamente."});
+                    $location.path('/turno/'+data);
+                }
+            );
+            /*
+            Turno.save({},$scope.turno, function () {
+                // se notifica
+                Flash.clear();
+                Flash.addAlert({type:'success', msg:"Se ha guardado el turno correctamente."});
+                $location.path('/turno');
+
+            })*/
+
+        }
+        else{
+            $scope.notienedestinatario=true;    
+        }
+    }
+  });

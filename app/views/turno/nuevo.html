@@ -1,0 +1,213 @@
+<div id="content">
+
+    <div class="pull-right">
+        <a class="btn btn-info" href="#/turno"><i class="glyphicon glyphicon-list"></i> Volver al listado</a>
+    </div>
+    <h1 class="text-center">
+    <span ng-show="!turno.turno">Nuevo</span><span ng-show="turno.turno">Edición de</span> turno
+    </h1>
+
+
+    <form role="form" ng-submit="guardar()">    
+
+        <div class="form well">
+            <div class="row">
+                <div class="col-md-3 pull-right">
+                    <div class="from-group">
+                        <label>Fecha de recepción *</label>             
+                        <div class="input-group">
+                            <input type="text" class="form-control" datepicker-popup="dd/MM/yyyy" ng-model="turno.fechaRecepcion" is-open="opened" max='{{max}}' datepicker-options="dateOptions" close-text="Cerrar" show-weeks="false" show-button-bar='false' required />
+                            <span class="input-group-btn">
+                                <button type="button" class="btn btn-default" ng-click="open($event)"><i class="fa fa-calendar"></i></button>
+                            </span>
+                        </div>               
+                    </div>
+                </div>
+
+                <div class="ribbon ribbon-chico" ng-show="turno.turno">TURNO <div class="pull-right"><b>{{turno.turno}}</b></div></div>
+
+            </div>
+            <fieldset>
+                <legend>Datos del documento</legend>
+                <div class="row">
+                    <div class="form-group col-md-2">
+                        <label for="turno.tipoDocumento" >Tipo de documento *</label>            
+                        <select class="form-control" ng-model="turno.tipoDocumento" required>
+                            <option value="">Seleccione...</option>
+                            <option value="0">OFICIO</option>
+                            <option value="1">TARJETA</option>
+                            <option value="2">CIRCULAR</option>
+                        </select>                    
+                    </div>
+
+                    <div class="form-group col-md-5">
+                        <label for="turno.numeroDoc" >Número de documento *</label>            
+                        <input class="form-control" ng-model="turno.numeroDoc" type="text" maxlength="45" required mayus>                    
+                    </div>
+
+                    <div class="form-group col-md-3">
+                        <label>Fecha del documento</label>            
+                        <div class="input-group">
+                            <input type="text" class="form-control" datepicker-popup="dd/MM/yyyy" ng-model="turno.fechaDoc" is-open="opened2" max='{{max}}' datepicker-options="dateOptions" close-text="Cerrar" show-weeks="false" show-button-bar='false' required tabindex="-1" />
+                            <span class="input-group-btn">
+                                <button type="button" class="btn btn-default" ng-click="open2($event)"><i class="fa fa-calendar"></i></button>
+                            </span>
+                        </div>
+
+                    </div>
+
+                    <div class="form-group col-md-2">
+                        <label>Recibido vía</label>            
+                        <select class="form-control" ng-model="turno.via">
+                            <option value="0">MENSAJERO</option>
+                            <option value="1">MENSAJERÍA</option>
+                        </select>                    
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="turno.asunto" >Asunto *</label>            
+                    <textarea class="form-control" ng-model="turno.asunto" required mayus></textarea>                    
+                </div>
+
+            </fieldset>
+            <fieldset>
+                <legend>Envía</legend>
+                <div class="row">
+                    <div class="form-group col-md-6">
+                        <label>Remitente *</label>            
+                        <input class="form-control" ng-model="turno.remitente" type="text" maxlength="100" required mayus>                            
+                    </div>
+
+                    <div class="form-group col-md-6">
+                        <label>Cargo remitente *</label>            
+                        <input class="form-control" ng-model="turno.cargoremitente" type="text" maxlength="100" required mayus>                    
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-md-6">
+                        <label>Dependencia</label>            
+                        <input class="form-control" ng-model="turno.dependencia" type="text" maxlength="100" mayus>                    
+                    </div>
+
+                    <div class="form-group col-md-6">
+                        <label>Estado</label>            
+                        <input class="form-control" ng-model="turno.estado" type="text" maxlength="30" mayus>                    
+                    </div>
+                </div>
+            </fieldset>
+
+
+
+            <fieldset>
+                <div class="panel panel-info" ng-show="!turno.turno">
+                    <div class="panel-heading"><b>Turnado a</b></div>
+                    <div class="alert alert-danger" ng-show="notienedestinatario">Requiere ser turnado a alguien.</div>
+
+                    <div class="form-horizontal well" ng-show="!mostrarpanel">
+                        <div class="form-group">
+                            <label class="col-sm-1 control-label">Buscar</label>
+                            <div class="col-md-9">
+                               <input type="text" ng-model="turnado" typeahead="state  as state.nombre for state in states | filter:$viewValue | limitTo:8" class="form-control" typeahead-on-select="agregar()">
+                           </div>
+                           <div class="col-md-2">
+                               <button type="button" class="btn btn-default" ng-click="mostrarpanel=true; turnado=undefined"><i class="glyphicon glyphicon-user"></i> Otro..</button>
+                           </div>
+                       </div>
+                   </div>
+
+                   <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th width="25px">#</th>
+                            <th>Nombre *</th>
+                            <th>Cargo *</th>
+                            <th width="100px"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-show="mostrarpanel">
+                            <td></td>
+                            <td>
+                             <input class="form-control" type="text" name="nombre" ng-model='nuevo.nombre' mayus>
+                             <span class="text-muted"><b>Nota:</b> Para agregar el destinatario permanentemente edite el catálogo.</span>
+                         </td>
+                         <td>
+                            <input class="form-control" maxlength="50" name="cargo" ng-model='nuevo.cargo' type="text" mayus>
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-primary" ng-click="agregar()"><i class="glyphicon glyphicon-plus"></i></button>
+                            <button type="button" class="btn btn-danger" ng-click="mostrarpanel=false"><i class="glyphicon glyphicon-remove"></i></button>
+                        </td>
+                    </tr>
+                    <tr ng-repeat="t in turnados">
+                        <td>{{$index + 1}}</td>
+                        <td>{{t.nombre}}</td>
+                        <td>{{t.cargo}}</td>
+                        <td><button class="btn btn-danger" type="button" title="Borrar" ng-click="eliminar($index)"><span class="fa fa-trash-o"></span></button></td>
+                    </tr>
+                </tbody>
+
+
+            </table>
+        </div>
+
+        <div ng-show="turno.turno">
+            <legend>Turnado a</legend>
+            <div class="alert alert-danger" ng-show="notienedestinatario">Complete la información.</div>
+            <div class="row">
+                    <div class="form-group col-md-6">
+                        <label>Nombre *</label>            
+                        <input class="form-control" ng-model="turno.turnado" type="text" maxlength="100" mayus>                            
+                    </div>
+
+                    <div class="form-group col-md-6">
+                        <label>Cargo*</label>            
+                        <input class="form-control" ng-model="turno.cargoturnado" type="text" maxlength="100" mayus>                    
+                    </div>
+                </div>            
+                <hr>
+        </div>
+        <div class="row">
+            <div class="form-group col-md-6">
+                <label>Indicación *</label>            
+                <textarea class="form-control" ng-model="turno.indicacion" required mayus>TOME LA ACCIÓN ADECUADA</textarea>                   
+            </div>
+
+            <div class="form-group col-md-6">
+                <label>Observaciones</label>            
+                <textarea class="form-control" ng-model="turno.observaciones" mayus></textarea>                    
+            </div>
+        </div>
+
+        <div class="row">
+
+            <div class="form-group col-md-6">
+                <label>Limite de tramite</label>            
+                <input class="form-control" ng-model="turno.limite" type="text" maxlength="30" placeholder="Fecha en formato dd/mm/aaaa">                  
+            </div>
+
+
+            <div class="form-group col-md-4">
+                <br>
+                <div ng-click="cambiaturno()" style="font-size:30px" ng-class="{'text-danger':turno.urgente==1}">
+                    <span ng-show="turno.urgente" class="fa fa-check-square-o"></span>            
+                    <span ng-show="!turno.urgente|| turno.urgente==0" class="fa fa-square-o"></span>
+                    <label>Marcar como urgente</label>
+                </div>
+            </div>
+
+        </div>
+
+    </fieldset>
+
+    <div class="form-group">
+        <div class="pull-right text-muted"><b>*</b> Campos obligatorios.</div>
+        <button type="submit" id="btnok" class="btn btn-success"><i class="glyphicon glyphicon-floppy-disk"></i> Registrar</button>
+        <a class="btn btn-default" href="#/turno"><i class="glyphicon glyphicon-remove"></i> Cancelar</a>
+    </div>
+
+
+</div><!-- form -->
+</form>
+</div>

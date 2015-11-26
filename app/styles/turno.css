@@ -1,0 +1,102 @@
+
+#titulo strong{
+    font-size: 25px;
+
+}
+
+strong{
+    font-size: 13pt;
+}
+
+span{
+    font-style: italic;
+}
+
+table{
+    width: 100%;
+    font-size: 10pt;
+}
+
+#turno table{    
+    border: #000 solid 2px;
+    text-align: center;
+}
+
+table thead td{
+    font-weight: bold;
+}
+#urgente{
+    font-size: 30px;
+    font-weight: bold;
+    color: red;
+    }
+#detalles{
+    text-align: center;
+}
+
+.colizq{
+    width: 20%;
+    vertical-align: top;
+}
+.negritas{
+    font-weight: bold;
+}
+
+#nota{
+    border: #000 solid 1px;
+    font-size: 9pt;
+    width: 100%;
+    text-align: center;
+}
+
+#comentarios{
+    border: #000 solid 0.1em;
+}
+
+#asunto{
+    border-right: #000 solid 3px;
+    border-bottom: #000 solid 3px;
+    height: 120px;
+    font-size: 17px;
+}
+
+#sad{
+    font-size: 8pt;
+    position: absolute;
+    right: 30px;
+}
+
+@media print{
+    body{
+        padding-top: 0;
+    }
+  #urgente{
+    position: absolute;
+    top: 412px;
+    font-size: 50pt;
+    font-weight: bold;
+    color: red;
+    right:18px;
+    }
+
+    #logo-ivea{
+        vertical-align: center;
+        width: 150px;
+        display: block;
+        margin: auto;
+    }
+
+    #logo-sev{
+        display: none;
+    }
+
+    #titulo{
+        position:relative;
+        width: 100%;
+        text-align: center;
+    }
+    p{
+        height: 40px;
+        padding-left: 5px;
+    }
+  }

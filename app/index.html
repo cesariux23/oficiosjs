@@ -1,0 +1,167 @@
+<!doctype html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width">
+    <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+    <!-- build:css styles/vendor.css -->
+    <!-- bower:css -->
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />
+    <!-- endbower -->
+    <!-- endbuild -->
+    <!-- build:css({.tmp,app}) styles/main.css -->
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.css" />
+    <link rel="stylesheet" href="bower_components/angular-sham-spinner/angular-sham-spinner.css"/>
+    <!-- endbuild -->
+</head>
+<body ng-app="oficiosApp">
+        <!--[if lt IE 7]>
+          <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+          <![endif]-->
+
+          <!-- Add your site or application content here -->
+          <sham-spinner text="Cargando..."></sham-spinner>
+          <div ng-controller='sesionCtrl'>
+            <div class="header">
+                <img id='logo-sev' class="hidden-print"  src="images/sev.jpg" width="220px">
+                <img id='logo-ivea' src="images/ivea.jpg" width="220px">
+                <div id="info" class="hidden-print">
+                    <h3 id="logo-app">Administración de Documentación</h3>
+                    <p ng-show="user.data.area">{{user.data.area.area}}</p>
+                    <p  ng-show="!user.data.area">DIRECCIÓN GENERAL</p>
+                    <span class="text-muted" ng-show="user.data.depto">{{user.data.depto.departamento}}
+                </div>
+            </div><!-- header -->
+
+
+            <!-- navbar-->
+
+            <nav class="navbar navbar-default" role="navigation">
+                <!-- Brand and toggle get grouped for better mobile display -->
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                </div>
+
+                <!-- Collect the nav links, forms, and other content for toggling -->
+                <div class="collapse navbar-collapse navbar-ex1-collapse">
+                    <p class="navbar-text user-info" ng-show="user.data"><i class="fa fa-user"></i> {{user.data.nombre}}</p>
+                    <ul class="nav navbar-nav" ng-show="user.isLogged && user.data.cambioContra=='1'">
+                        <li class="dropdown pagekey pagekey_E" ng-show="user.data.area.emision">
+                            <a class="dropdown-toggle" data-toggle="dropdown"> <i class="fa fa-file-text"></i> Emisión <b class="caret"></b></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="#/emision">Listado de documentos emitidos</a></li>
+                                <li><a href="#/emision/nuevo">Registrar nuevo</a></li>
+                            </ul>
+                        </li>
+                        <li ng-show="user.data.area.recepcion=='1' && !user.data.idDepartamento" class="pagekey pagekey_R">
+                            <a href="#/recepcion"><i class="fa fa-folder-open" n></i> Recepción</a>
+                        </li>
+                        <li class="dropdown pagekey pagekey_T"  ng-show="user.data.idArea==3">
+                            <a class="dropdown-toggle" data-toggle="dropdown">  <span class="glyphicon glyphicon-send"></span> Turnos <b class="caret"></b></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="#/turno">Listado de turnos</a></li>
+                                <li><a href="#/turno/nuevo">Registrar nuevo</a></li>
+                            </ul>
+                        </li>
+                        <li class="pagekey pagekey_P">
+                            <a href="#/paquete" ng-show="user.data.idArea==3"><i class="fa fa-archive"></i> Paquetes</a>
+                        </li>
+                        <li class="pagekey pagekey_B">
+                            <a href="#/busqueda"><i class="fa fa-search"></i> Busqueda</a>
+                        </li>
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right" ng-show="user.isLogged">
+                        <li class="pagekey pagekey_C">
+                            <a href="#/user"><i class="fa fa-key"></i> Cambiar contraseña</a>
+                        </li>
+                        <li class="salir">
+                            <a ng-click="logout()" class="salirt"> <i class="fa fa-power-off"></i> Salir</a>
+                        </li>
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right" ng-show="!user.isLogged">
+                        <li class="pagekey pagekey_I">
+                            <a href="#/login"><i class="glyphicon glyphicon-log-in"></i> Inicio de sesión</a>
+                        </li>
+                    </ul>
+                </div><!-- /.navbar-collapse -->
+            </nav>
+            <!-- endnavbar-->
+
+        </div>
+        <div class="container">
+            <!-- Mensajes Flash-->
+            <div ng-controller="AlertCtrl" class="hidden-print">
+                <alert ng-repeat="alert in flash" type="alert.type" close="closeAlert($index)"><div ng-bind-html="alert.msg"></div></alert>
+            </div>
+            <div class="contenedor" ng-view=""/>
+        </div>
+        <div class="footer hidden-print">
+        <div class="pull-right">
+            Desarrollado en <b>DG-SA-DTI</b>, 2015
+        </div>
+        <b>Instituto Veracruzano de Educación para los Adultos.</b> <br>
+        Av. de las Américas N° 270 Col. María Esther CP. 91030. Xalapa, Ver.<br>
+        Tel. 01 (228) 8 40 19 35 Conmutador Ext. 1000 01-800-999-4832
+        </div>
+
+
+        <!--[if lt IE 9]>
+        <script src="bower_components/es5-shim/es5-shim.js"></script>
+        <script src="bower_components/json3/lib/json3.min.js"></script>
+        <![endif]-->
+
+        <!-- build:js scripts/vendor.js -->
+        <!-- bower:js -->
+        <script src="bower_components/jquery/dist/jquery.js"></script>
+        <script src="bower_components/angular/angular.js"></script>
+        <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
+        <script src="bower_components/angular-resource/angular-resource.js"></script>
+        <script src="bower_components/angular-cookies/angular-cookies.js"></script>
+        <script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
+        <script src="bower_components/angular-route/angular-route.js"></script>
+        <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+        <!-- endbower -->
+        <!-- endbuild -->
+
+        <!-- build:js({.tmp,app}) scripts/scripts.js -->
+        <script src="scripts/app.js"></script>
+        <script src="scripts/angular-locale_es-mx.js"></script>
+        <script src="scripts/controllers/main.js"></script>
+        <script src="scripts/controllers/login.js"></script>
+        <script src="scripts/controllers/emision.js"></script>
+        <script src="scripts/controllers/emision/nuevo.js"></script>
+        <script src="scripts/controllers/recepcion.js"></script>
+        <script src="scripts/controllers/recepcion/index.js"></script>
+        <script src="scripts/controllers/turno.js"></script>
+        <script src="scripts/controllers/turno/nuevo.js"></script>
+        <script src="scripts/controllers/paquete/nuevo.js"></script>
+        <script src="scripts/controllers/user.js"></script>
+        <script src="scripts/controllers/busqueda.js"></script>
+        <script src="scripts/controllers/paquete.js"></script>
+        <script src="scripts/directives/mayus.js"></script>
+        <script src="scripts/directives/printDiv.js"></script>
+        <script src="scripts/controllers/emision/edit.js"></script>
+        <script src="scripts/controllers/turno/edit.js"></script>
+        <script src="scripts/controllers/turno/view.js"></script>
+        <script src="scripts/services/user.js"></script>
+        <script src="scripts/controllers/sesion.js"></script>
+        <script src="scripts/services/catalogos.js"></script>
+        <script src="scripts/controllers/turno/destinatarios.js"></script>
+        <script src="bower_components/angular-sham-spinner/angular-sham-spinner.js"></script>
+        <script src="bower_components/checklist-model/checklist-model.js"></script>
+        <script src="scripts/services/seguimiento.js"></script>
+        <!-- endbuild -->
+
+    </body>
+    </html>

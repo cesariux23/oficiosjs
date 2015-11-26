@@ -1,0 +1,314 @@
+<link rel="stylesheet" type="text/css" href="styles/turno-paquete.css" />
+<div id="contenido" class="hidden-print">
+<div class="pull-right">
+	<b class="btn btn-primary" ng-click="nuevopaquete()" ng-show="nuevo"><i class="glyphicon glyphicon-plus"></i> Registrar</b>
+	<button class="btn btn-danger" ng-click="nuevo=true" ng-show="!nuevo"><i class="glyphicon glyphicon-remove"></i> Cancelar</button>
+</div>
+
+<h1 class="text-center">
+Paquetes de correspondencia
+</h1>
+
+<div collapse="!nuevo">
+<hr>
+<div class="row">
+	<div class="col-md-5">
+		<br>
+		<br>
+		<div id="contenedor-calendar">
+			<div id="encabezado-cal">
+				<button class="btn btn-default pull-left" ng-click="cambiames(mes-1)"><span class="glyphicon glyphicon-chevron-left text-muted"></span></button>
+				<button class="btn btn-default pull-right" ng-click="cambiames(mes+1)"><span class="glyphicon glyphicon-chevron-right text-muted"></span></button>
+				<h3 class="text-center text-muted">{{nombremeses[mes-1]}} de <span id="a">{{anio}}</span></h3> 
+			</div>
+			<div>
+				<table id="calendario" class="table table-bordered calendario">
+					<thead>
+						<tr>
+							<th>D</th><th>L</th><th>M</th><th>M</th><th>J</th><th>V</th><th>S</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="week in weeks">
+							<td ng-repeat="day in week track by $index" ng-class="{'well':day==''}">
+								<div ng-if="day!=''">
+									{{day}}
+									<div class="text-success text-center" style="font-size:30px; cursor:pointer" ng-show='(fechas | filter:{fechaRecepcion:anio+"-"+("0" + mes).slice(-2)+"-"+("0" + day).slice(-2)}).length>0' ng-click="seleccionarfecha(day)">
+										<span class="fa fa-archive"/>
+									</div>
+								</div>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<div class="row">
+				<div class="col-md-3" ng-click="hoy()" style="cursor:pointer">
+					<span class="fa fa-calendar-o text-sucess"></span> <span class="text-muted">Hoy</span>
+				</div>
+				<div class="col-md-4">
+					<span class="fa fa-archive text-success"></span> <span class="text-muted">Fecha valida</span>
+				</div>
+
+			</div>
+		</div>
+	</div>
+	<div class="col-md-7">
+	<h2 class="text-center"><span class="fa fa-calendar-o"></span> {{dia}} de {{nombremeses[messeleccionado-1]}}</h2>
+		<div ng-show="paquetes.length==0">
+			<div class="alert alert-warning">
+				<br>
+				<br>
+				<br>
+				<br>
+				<p class="text-center"><i class="fa fa-archive fa-5x"></i></p>
+				<h1 class="text-center"><b>No hay paquetes registrados.</b></h1>
+				<br>
+				<h4 class="text-center">Seleccione una fecha valida o registre paquetes para esta fecha.</h4>
+				<br>
+				<br>
+				<br>
+				<br>
+			</div>
+
+		</div>
+		<div ng-show="paquetes.length>0">
+			<div class="well">
+				<h3><b>Impresión de turnos para las áreas</b></h3>
+				<p class="text-muted">Seleccione un área para imprimir el turno</p>
+				<div class="list-group">
+					<a class="list-group-item active" ng-click="print()"><span class="fa fa-print"></span> <b>Todas las áreas</b><span class="badge">{{paquetes.length}}</span></a>
+					<a class="list-group-item" ng-repeat="a in areas" ng-show="(paquetes| filter:{idArea:a.id}:true).length>0 && a.id!=5" ng-click="print(a.id)"><span class="fa fa-print"></span> {{a.area}}<span class="badge">{{(paquetes| filter:{idArea:a.id}:true).length}}</span></a>
+				</div>
+				
+				<div class="list-group" ng-show="(paquetes| filter:{idArea:'5'}:true).length>0">
+				<b>SAF</b>
+					<a class="list-group-item" ng-show="(paquetes| filter:{idArea:'5',depto:null}:true).length>0" ng-click="print('5')"><span class="fa fa-print"></span> SUBDIRECCIÓN DE ADMINISTRACIÓN Y FINANZAS <span class="badge">{{(paquetes| filter:{idArea:'5',depto:null}:true).length}}</span></a>
+					<a class="list-group-item" ng-repeat="d in deptos" ng-show="(paquetes| filter:{depto:d.departamento}).length>0" ng-click="print(d.id, true)"><span class="fa fa-print"></span> {{d.departamento}}<span class="badge">{{(paquetes| filter:{depto:d.departamento}:true).length}}</span></a>					
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+</div>
+<div collapse='nuevo'>
+<form ng-submit="guardar()">
+    <div class="form well">
+    <legend>
+    	<span ng-show='!paquete.id'>Registro</span>
+    	<span ng-show='paquete.id'>Editar</span>
+    </legend>
+        <div class="row">
+            <div class="form-group col-md-2">
+                <label>Fecha de recepción *</label> 
+                <div class="input-group">
+	                <input type="text" class="form-control" datepicker-popup="dd/MM/yyyy" ng-model="paquete.fechaRecepcion" is-open="opened" max='{{max}}' datepicker-options="dateOptions" close-text="Cerrar" show-weeks="false" show-button-bar='false' required />
+	                <span class="input-group-btn">
+	                	<button class="btn btn-default" ng-click="open($event)"><i class="fa fa-calendar"></i></button>
+	                </span>
+                </div>
+            </div>
+
+            <div class="form-group col-md-6">
+                <label>Área</label>		
+                <select class="form-control" ng-model="paquete.idArea" ng-options="a.id as a.area for a in areas">
+                </select>			
+            </div>
+            <div class="form-group col-md-4" ng-show="paquete.idArea==5">
+                <label>Departamento</label> 
+                <select class="form-control" ng-model="paquete.depto" ng-options="d.departamento as d.departamento for d in deptos">
+                    <option value="">SUBDIRECCIÓN</option>
+                </select> 
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="form-group col-md-6">
+                <label for="paquete.envia">Remitente *</label>		
+                <input class="form-control" ng-model="paquete.envia" type="text" maxlength="100" required mayus>			
+            </div>
+            <div class="form-group col-md-6">
+                <label for="paquete.asunto">Asunto *</label>
+                <input class="form-control" ng-model="paquete.asunto" type="text" maxlength="100" required mayus> 
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="form-group col-md-4">
+                <label >Guía</label>
+                <input class="form-control" ng-model="paquete.guia" type="text" placeholder="No. de guía del paquete" mayus> 
+            </div>
+            <div class="form-group col-md-4">
+                <label>Número de documento</label>			
+                <input class="form-control" ng-model="paquete.numeroDoc" type="text" maxlength="45">					
+            </div>
+            <div class="form-group col-md-4">
+                <label>Fecha del documento</label>			
+                <div class="input-group">
+	                <input type="text" class="form-control" datepicker-popup="dd/MM/yyyy" ng-model="paquete.fechaDoc" is-open="opened2" max='{{max}}' datepicker-options="dateOptions" close-text="Cerrar" show-weeks="false" show-button-bar='false' />
+	                <span class="input-group-btn">
+	                	<button class="btn btn-default" ng-click="open2($event)"><i class="fa fa-calendar"></i></button>
+	                </span>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="pull-right text-muted"><b>*</b> Campos obligatorios.</div>
+            <button type="submit" class="btn btn-success">
+            	<i class="glyphicon glyphicon-floppy-disk"></i>
+            	<span ng-show='paquete.id'> Guardar cambios</span>
+            	<span ng-show='!paquete.id'> Registrar paquete</span>
+           	</button>
+        </div>
+    </div>
+</form>
+<!-- form -->
+</div>
+
+
+<div ng-show="paquetes.length>0">
+<hr>
+	<h3 class="text-center">Paquetes recibidos</h3>
+
+	<table class="table table-bordered">
+		<thead>
+			<tr class="well">
+				<th>Área</th>
+				<th>Remitente</th>
+				<th>Asunto</th>
+				<th>No. documento</th>
+				<th>Guía</th>
+				<th width="100px">Acciones</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr ng-repeat="p in paquetes">
+				<td>
+				<div ng-show="!p.depto">{{(areas|filter:{id:p.idArea}:true)[0].area}}</div>
+				<div ng-show="p.depto">{{p.depto}}</div>
+				</td>
+				<td>{{p.envia}}</td>
+				<td>{{p.asunto}}</td>
+				<td>{{p.numeroDoc}}</td>
+				<td>{{p.guia}}</td>
+				<td>
+					<button class="btn btn-info" title="Editar" ng-click="editar(p)"><span class="fa fa-pencil"></span></button>
+					<button class="btn btn-danger" title="Borrar" data-toggle="modal" data-target="#borrar" ng-click="confirmarb(p)"><span class="glyphicon glyphicon-trash"></span></button>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+</div>
+
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="borrar" tabindex="-1" role="dialog">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title">Borrar paquete</b></h4>
+			</div>
+			<div class="modal-body">	
+				¿Esta seguro de borrar el registro?
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+				<button type="button" class="btn btn-danger" data-dismiss="modal" ng-click="borrar()">Borrar</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- Area en donde se repiten los vales de entrega -->
+<div class="visible-print">
+<!-- areas -->
+	<div ng-repeat="a in aimprimir" ng-show="(paquetes|filter:{idArea:a.id,depto:null}:true).length>0" class="vale">
+		<img src="images/ivea.jpg" width="150px" class="pull-left">
+
+		<div class="turno">
+			<div class="text-center" id='titulo'>
+				<b>UNIDAD DE DOCUMENTACIÓN Y SEGUIMIENTO</b><br>
+				CORRESPONDENCIA DIRIGIDA A LAS ÁREAS PARA SU ATENCIÓN Y/O SEGUIMIENTO<br>
+				<b>{{dia}} de {{nombremeses[messeleccionado-1]}} de {{anio}}</b>
+			</div>
+			<p></p>
+			<div class="tabla">
+				<table class="table table-bordered">
+					<thead>
+						<tr>
+							<th>Envía o remite</th>
+							<th>Asunto</th>
+							<th width="100px">No. de documento</th>
+							<th width="70px">Fecha del documento</th>
+							<th width="90px">No. guía</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="p in (paquetes|filter:{idArea:a.id,depto:null}:true)">
+							<td>{{p.envia}}</td>
+							<td>{{p.asunto}}</td>
+							<td>{{p.numeroDoc}}</td>
+							<td>{{p.fechadoc}}</td>
+							<td>{{p.guia}}</td>
+						</tr>
+					</tbody>
+
+				</table>
+			</div>
+			<div class="text-center firma">
+				__________________________________________________________<br>
+				<b>{{(aimprimir|filter:{id:a.id}:true)[0].area}}</b>
+				<br>
+				Firma de recibido
+			</div>
+		</div>
+	</div>
+
+	<!-- Deptos-->
+
+	<div ng-repeat="d in dimprimir" ng-show="(paquetes|filter:{depto:d.departamento}:true).length>0" class="vale">
+		<img src="images/ivea.jpg" width="150px" class="pull-left">
+
+		<div class="turno">
+			<div class="text-center" id='titulo'>
+				<b>UNIDAD DE DOCUMENTACIÓN Y SEGUIMIENTO</b><br>
+				CORRESPONDENCIA DIRIGIDA A LAS ÁREAS PARA SU ATENCIÓN Y/O SEGUIMIENTO<br>
+				<b>{{dia}} de {{nombremeses[messeleccionado-1]}} de {{anio}}</b>
+			</div>
+			<p></p>
+			<div class="tabla">
+				<table class="table table-bordered">
+					<thead>
+						<tr>
+							<th>Envía o remite</th>
+							<th>Asunto</th>
+							<th width="100px">No. de documento</th>
+							<th width="70px">Fecha del documento</th>
+							<th width="90px">No. guía</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="p in (paquetes|filter:{depto:d.departamento}:true)">
+							<td>{{p.envia}}</td>
+							<td>{{p.asunto}}</td>
+							<td>{{p.numeroDoc}}</td>
+							<td>{{p.fechadoc}}</td>
+							<td>{{p.guia}}</td>
+						</tr>
+					</tbody>
+
+				</table>
+			</div>
+			<div class="text-center firma">
+				__________________________________________________________<br>
+				<b>{{(dimprimir|filter:{id:d.id}:true)[0].departamento}}</b>
+				<br>
+				Firma de recibido
+			</div>
+		</div>
+	</div>
+</div>
+
