@@ -7,8 +7,7 @@ angular
   'ngSanitize',
   'ngRoute',
   'ui.bootstrap',
-  'angularShamSpinner',
-  'checklist-model'
+  'angularShamSpinner'
   ])
 .config(function ($routeProvider) {
   $routeProvider
