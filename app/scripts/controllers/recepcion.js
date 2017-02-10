@@ -5,7 +5,7 @@ angular.module('oficiosApp')
 	return $resource('ci/index.php/recepcion/:id', {id:'@id'}, {
 		'update':{
 			method: 'PUT',
-			isArray: false 
+			isArray: false
 		}//,
 		//'save':  {method:'POST', isArray:true}
 		,
@@ -16,9 +16,7 @@ angular.module('oficiosApp')
   .controller('RecepcionCtrl', function ($scope, $http, Recepcion, Flash, $filter, Utils, user, catalogos, Seguimiento) {
   	Flash.clear();
     $scope.tipo=['OFICIO','TARJETA','CIRCULAR','TURNO'];
-
     $scope.area=user.data.area.area;
-    
 
     //regresa los péndientes
     $scope.getconcentrado=function (t) {
@@ -37,12 +35,13 @@ angular.module('oficiosApp')
     $scope.max=new Date();
     $scope.print={};
     $scope.r={};
-    $scope.print.selected=[];
+    $scope.paraImprimir=[];
+    $scope.paraTurnar=[];
     $scope.dateOptions = {
     'year-format': "'yy'",
     'starting-day': 1
     };
-    
+
     $scope.isCollapsed=true;
 
 
@@ -144,10 +143,9 @@ angular.module('oficiosApp')
 	    	}
     	}
     	else{
-    		//se busca un documento interno
-    		if ($scope.recepcion.numero.match(/^(DG\/|(DG\/)?(SPPP|SESO|(SAF(\/(RH|AF))?)|SAS|SSE|UAL|UAJ|CD|UT|UG|CRC)\/)/)!=null) {
-    			if($scope.recepcion.numero.match(/^(DG\/|(DG\/)?(SPPP|SESO|(SAF(\/(RH|AF))?)|SAS|SSE|UAL|UAJ|UDS|UT|UG|CRC)\/)(1)?\d{4}\/20((1[4-9])|([2-9]\d))$/)!=null){
-    				$http.get('ci/index.php/emision',{params:{num:$scope.recepcion.numero, t: $scope.recepcion.tipoDoc}}).success(function (data) {
+        //parcea el documento a interno
+        if($scope.recepcion.numero.match(/(([a-zA-Z]+|\d+)\/)+20\d{2}/)){
+          $http.get('ci/index.php/emision',{params:{num:$scope.recepcion.numero, t: $scope.recepcion.tipoDoc}}).success(function (data) {
     					if(data === 'null'){
     						$scope.error="No se ha encontrado el documento con número <b>"+$scope.recepcion.numero+"</b>.";
     						$scope.cargado=false;
@@ -165,14 +163,7 @@ angular.module('oficiosApp')
     					}
 
     				});
-
-    			}
-    			else{
-    				$scope.error="<b>"+$scope.recepcion.numero+"</b> no es un documento valido.";
-    				$scope.cargado=false;
-    			}
-
-    		}
+        }
     		else{
     			$scope.error="<b>"+$scope.recepcion.numero+"</b> no es un documento interno.";
     				$scope.cargado=false;
@@ -182,7 +173,7 @@ angular.module('oficiosApp')
     else{
     	$scope.error="Selecccione un tipo de documento.";
     }
-    	
+
     }
 
     $scope.limpiar=function () {
@@ -201,7 +192,7 @@ angular.module('oficiosApp')
     	else{
             //si no es cargado se ajusta fecha del doc
             if(!$scope.cargado)
-               $scope.recepcion.fechaDocumento=Utils.conviertefecha($scope.recepcion.fechaDocumento); 
+               $scope.recepcion.fechaDocumento=Utils.conviertefecha($scope.recepcion.fechaDocumento);
             $scope.recepcion.fechaRecepcion=Utils.conviertefechayhora($scope.recepcion.fechaRecepcion);
             if($scope.recepcion.id){
                 $scope.recepcion.modificacion=Utils.conviertefechayhora(new Date());
@@ -221,7 +212,7 @@ angular.module('oficiosApp')
     		}
     		);
             }
-    		
+
     	}
     }
 
@@ -244,10 +235,13 @@ angular.module('oficiosApp')
     $scope.quitar=function () {
         // body...
         $scope.print.selected=[];
+        $scope.turnar.selected=[];
         //$scope.recibidos=Recepcion.getall();
     }
-
-    $scope.imprimir=function () {
+    $scope.imprimir = function () {
+      window.print();
+    }
+    $scope.turnar=function () {
         //guarda los camibios e imprime
         $scope.print.selected.forEach(function (d) {
             //gurdando en la base
@@ -256,8 +250,7 @@ angular.module('oficiosApp')
             d.estado=1;
             Recepcion.update(d);
         });
-        window.print();
-        $scope.quitar();
+        //$scope.quitar();
         $scope.actualiza();
     }
 
@@ -276,10 +269,30 @@ angular.module('oficiosApp')
         $scope.getconcentrado(tipo);
     }
 
+
     //muestra el modal para el seguimiento
     $scope.registrarseguimiento=function  (doc) {
         $scope.doc=angular.copy(doc);
     $('#detalles').modal('show');
+    }
+
+    // agregar al arreglo
+    $scope.seleccionar=function  (doc, arreglo) {
+      var d=JSON.parse(angular.toJson(doc));
+      console.log('doc:');
+      console.log(d);
+      var i=arreglo.find(function(item){
+        return item.id == d.id;
+      });
+      console.log('index:');
+      console.log(i);
+      if (typeof i != 'undefined') {
+        arreglo.splice(i,1);
+      } else {
+        arreglo.push(d);
+      }
+      console.log('arreglo:');
+      console.log(arreglo);
     }
 
     //guarda las acciones y marca el seguimiento
@@ -300,6 +313,6 @@ angular.module('oficiosApp')
                 $scope.actual();
         });
     }
-    
+
 
   });
