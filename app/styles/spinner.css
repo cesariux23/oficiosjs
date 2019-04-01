@@ -1,0 +1,83 @@
+.sham-spinner-blocker .sham-spinner-container .spinner {
+    background-repeat: no-repeat;
+    background-position: center center;
+    -moz-animation: sham-spin infinite linear;
+    -moz-transform-origin: 50% 50%;
+    -webkit-animation: sham-spin infinite linear;
+    -webkit-transform-origin: 50% 50%;
+    -o-animation: sham-spin infinite linear;
+    -o-transform-origin: 50% 50%;
+    animation: sham-spin infinite linear;
+    transform-origin: 50% 50%
+}
+
+@-moz-keyframes sham-spin {
+    0% {
+        -moz-transform: rotate(0)
+    }
+    100% {
+        -moz-transform: rotate(360deg)
+    }
+}
+
+@-webkit-keyframes sham-spin {
+    0% {
+        -webkit-transform: rotate(0)
+    }
+    100% {
+        -webkit-transform: rotate(360deg)
+    }
+}
+
+@keyframes sham-spin {
+    0% {
+        transform: rotate(0)
+    }
+    100% {
+        transform: rotate(360deg)
+    }
+}
+
+@-o-keyframes sham-spin {
+    0% {
+        -o-transform: rotate(0)
+    }
+    100% {
+        -o-transform: rotate(360deg)
+    }
+}
+
+.sham-spinner-blocker {
+    background: #fff;
+    opacity: 1;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 5000
+}
+
+.sham-spinner-blocker .sham-spinner-container {
+    border: 0;
+    display: table;
+    position: relative;
+    width: auto;
+    top: 45%;
+    margin: auto
+}
+
+.sham-spinner-blocker .sham-spinner-container .text {
+    display: block;
+    text-align: center;
+    font-weight: bold;
+
+}
+
+.sham-spinner-blocker .sham-spinner-container .spinner {
+    display: block;
+    float: left;
+    width: 70px;
+    height: 70px;
+    animation-duration: 2s;
+    -webkit-animation-duration: 2s;
+    background-image: url("data:image/svg+xml;utf8, <svg version='1.1' id='Layer_1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px' width='44px' height='44px' viewBox='0 0 32 32' enable-background='new 0 0 32 32' xml:space='preserve'><path opacity='0.4' fill='indianred' d='M23.656,9.041c1.568,1.725,2.56,3.978,2.677,6.465H32c-0.123-4.049-1.747-7.718-4.338-10.472 L23.656,9.041z'/><path fill='indianred' d='M15.507,5.667V0c-4.049,0.122-7.72,1.747-10.473,4.337l4.007,4.006C10.767,6.774,13.02,5.784,15.507,5.667z'/><path opacity='0.5' fill='indianred' d='M27.662,26.966c2.591-2.755,4.215-6.424,4.338-10.474h-5.667 c-0.117,2.488-1.108,4.74-2.677,6.466L27.662,26.966z'/><path opacity='0.3' fill='indianred' d='M22.959,8.344l4.007-4.006C24.213,1.747,20.543,0.122,16.494,0l-0.001,5.667 C18.98,5.784,21.233,6.774,22.959,8.344z'/><path opacity='0.7' fill='indianred' d='M9.041,23.655l-4.007,4.007c2.753,2.591,6.424,4.215,10.473,4.338v-5.667 C13.02,26.216,10.767,25.225,9.041,23.655z'/><path opacity='0.6' fill='indianred' d='M16.493,26.333L16.494,32c4.049-0.123,7.719-1.747,10.472-4.338l-4.007-4.007 C21.233,25.225,18.98,26.216,16.493,26.333z'/> <path opacity='0.8' fill='indianred' d='M5.667,16.492H0c0.123,4.05,1.747,7.721,4.338,10.474l4.006-4.008 C6.775,21.232,5.784,18.98,5.667,16.492z'/><path opacity='0.9' fill='indianred' d='M4.338,5.034C1.747,7.788,0.123,11.457,0,15.506h5.667c0.117-2.487,1.108-4.74,2.677-6.465 L4.338,5.034z'/></svg>")
+}

@@ -22,7 +22,7 @@ angular.module('oficiosApp')
     	url:'ci/index.php/user/login',
     	params:$scope.user,
     	method:"POST"
-    } 
+    }
     $http(config)
     .success(function(data, status, headers, config) {
       if (data.status) {
@@ -41,7 +41,7 @@ angular.module('oficiosApp')
 
     function ajaxCallback() {
         submit();
-    } 
+    }
     return false;
   }
 

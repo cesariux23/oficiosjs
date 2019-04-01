@@ -3,7 +3,7 @@
 	<div class="pull-right">
 		<div ng-show="isCollapsed">
 			<button type="button" class="btn btn-danger" ng-click="quitar();" ng-show="print.selected.length>0"><span class="fa fa-times"></span> Cerrar</button>
-			<button type="button" class="btn btn-primary" ng-click="nuevo()" ng-show="print.selected.length==0 && !filtropendientes"><span class="glyphicon glyphicon-plus"></span> Registrar </button>
+			<button type="button" class="btn btn-primary" ng-click="nuevo()" ng-show="!((recibidos|filter:{turnar:true}).length > 0 | (recibidos|filter:{imprimir:true}).length > 0) && !filtropendientes"><span class="glyphicon glyphicon-plus"></span> Registrar </button>
 		</div>
 		<button type="button" class="btn btn-danger" ng-click="isCollapsed = !isCollapsed" ng-show="!isCollapsed"><span class="glyphicon glyphicon-remove"></span> Cancelar</button>
 
@@ -13,22 +13,30 @@
 
 	<h1 class="text-center">Seguimiento de documentación</h1>
 
-	<div class="well" ng-show="print.selected.length>0">
-		<legend>Imprimir</legend>
+	<div class="well" ng-show="(recibidos|filter:{turnar:true}).length > 0">
+		<legend>Turnar</legend>
 		<div class="alert alert-warning">
-			<b>{{print.selected.length}}</b> documentos seleccionados.
+			<b>{{(recibidos|filter:{turnar:true}).length}}</b> documentos seleccionados.
 		</div>
 		<div class="row">
 			<div class="form-group col-md-6">
 				<label>Turnado a *</label>
-				<input type="text" class="form-control" required="required" ng-model="pr.turnado" mayus>
+				<input type="text" class="form-control" required="required" ng-model="pr.turnado">
 			</div>
 			<div class="form-group col-md-6">
-				<label>Indicación *</label>
-				<input type="text" class="form-control" required="required" ng-model="pr.indicacion" mayus>
+				<label>Indicación</label>
+				<input type="text" class="form-control" required="required" ng-model="pr.indicacion">
 			</div>
 		</div>
-		<button type="button" class="btn btn-success" ng-click="imprimir()" ng-show="print.selected.length>0" ng-disabled="!(pr.indicacion && pr.turnado)"><span class="fa fa-print"></span> Imprimir </button>
+		<button type="button" class="btn btn-success" ng-click="turnar()" ng-disabled="!(pr.turnado)"><span class="fa fa-send"></span> Turnar documentos</button>
+	</div>
+
+  <div class="well" ng-show="(recibidos|filter:{imprimir:true}).length > 0">
+		<legend>Imprimir</legend>
+		<div class="alert alert-info">
+			<b>{{(recibidos|filter:{imprimir:true}).length}}</b> documentos seleccionados.
+		</div>
+		<button type="button" class="btn btn-success" ng-click="imprimir()"><span class="fa fa-print"></span> imprimir listado</button>
 	</div>
 
 	<div collapse="isCollapsed">
@@ -113,7 +121,7 @@
 			</form>
 		</div>
 	</div>
-	<div ng-show="isCollapsed">
+	<div ng-show="isCollapsed | !((recibidos|filter:{turnar:true}).length > 0 | (recibidos|filter:{imprimir:true}).length > 0)">
 		<div class="panel panel-default">
 		  <div class="panel-heading">
 		    <h3 class="panel-title text-center">Días trascurridos sin atención / Número de documentos pendientes</h3>
@@ -126,7 +134,7 @@
 							0 a 20 días
 						</td>
 						<td ng-show='concentrado.uno>0'>
-							<button type="button" class="btn btn-sm btn-success btn-lg" ng-click="pendientes(1)">{{concentrado.uno}}</button>
+							<button type="button" class="btn btn-success btn-lg" ng-click="pendientes(1)">{{concentrado.uno}}</button>
 						</td>
 						<td ng-show='concentrado.uno==0'>
 							<button type="button" class="btn btn-success btn-lg" disabled="">
@@ -138,7 +146,7 @@
 							21 a 30 días
 						</td>
 						<td ng-show='concentrado.dos>0'>
-							<button type="button" class="btn btn-sm btn-warning btn-lg" ng-click="pendientes(2)">{{concentrado.dos}}</button>
+							<button type="button" class="btn btn-warning btn-lg" ng-click="pendientes(2)">{{concentrado.dos}}</button>
 						</td>
 						<td ng-show='concentrado.dos==0'>
 							<button type="button" class="btn btn-warning btn-lg" disabled="">
@@ -190,6 +198,10 @@
 					<th>Información del documento</th>
 					<th>Información del turno</th>
 					<th width="200px">Turnado a</th>
+          <th width="100px">Archivo</th>
+          <th width="100px">
+            Imprimir
+          </th>
 					<th>Seguimiento</th>
 				</tr>
 			</thead>
@@ -232,11 +244,28 @@
 							<div class="checkbox">
 
 								<label>
-									<input type="checkbox" checklist-model="print.selected" checklist-value="r">
+									<input type="checkbox" ng-model="r.turnar">
 									Turnar
 								</label>
 							</div>
 						</td>
+            <td>
+              <button type="button" class="btn btn-large" title="Subir archivo">
+                <span class="fa fa-upload"></span>
+              </button>
+              <button type="button" class="btn btn-large" title="Actualizar archivo">
+                <span class="fa fa-refresh"></span>
+              </button>
+              <button type="button" class="btn btn-info btn-large" title="Descargar archivo">
+                <span class="fa fa-download"></span>
+              </button>
+            </td>
+            <td>
+              <label>
+								<input type="checkbox" ng-model="r.imprimir">
+							  <i class="fa fa-print"></i>
+							</label>
+            </td>
 						<td class="text-center">
 							{{periodo((r.fechaRecepcion |dateToISO))}}
 							<div ng-show="r.estado==2">
@@ -262,12 +291,12 @@
 
 	<!-- vales -->
 	<div class="vale visible-print">
-		<img src="images/ivea.jpg" width="150px" class="pull-left">
+		<img src="images/ivea.jpg">
 
 		<div class="turno">
-			<div class="text-center" id='titulo'>
+			<div id='titulo'>
 				<b>{{area}}</b><br>
-				CORRESPONDENCIA PARA SU ATENCIÓN Y/O SEGUIMIENTO<br>
+				DOCUMENTACIÓN PARA SU ATENCIÓN Y/O SEGUIMIENTO<br>
 				<b>{{hoy | date:"dd/MMMM/yyyy"}}</b>
 			</div>
 			<p></p>
@@ -276,110 +305,56 @@
 					<thead>
 						<tr>
 							<th>ID</th>
-							<th width="75px">Recepción</th>
-							<th>Remitente</th>
+							<th>Recepción</th>
 							<th>Información del documento</th>
-							<th>Información del turno</th>
+							<th>Turnado</th>
+              <th>Firma</th>
 						</tr>
 					</thead>
 					<tbody>
-						<tr ng-repeat="r in print.selected">
+						<tr ng-repeat="r in (recibidos|filter:{imprimir:true})">
 							<td>{{r.id}}</td>
 							<td>{{r.fechaRecepcion | dateToISO | date:"dd/MMMM/yyyy hh:mm a"}}</td>
 							<td>
-								<b>{{r.envia}}</b>,<br>
-								{{r.cargo}}<br>
-								{{r.dependencia}}
+								<div class="row">
+                  <div class="col-xs-6">
+                    <span class="text-muted">{{tipo[r.tipoDoc]}} <b>{{r.numero}}</b></span>, {{r.fechaDocumento | date:"dd/MMMM/yyyy"}}<br>
+                    <p>
+                      {{r.envia}}<br>
+                      {{r.cargo}}<br>
+                      {{r.dependencia}}
+                    </p>
+                  </div>
+                  <div class="col-xs-6">
+                    <b>Asunto:</b>
+                    <p>
+                      {{r.asunto}}
+                    </p>
+                    <p ng-show="r.turno">
+                      Turno <b>{{r.turno}}</b>,{{r.indicaciont}}
+                      <div ng-show="r.urgente">
+                        <br>
+                        <span class="label label-danger">URGENTE</span>
+                      </div>
+                    </p>
+                  </div>
+                </div>
 							</td>
-							<td>
-								<span class="text-muted">{{tipo[r.tipoDoc]}} <b>{{r.fechaDocumento | date:"dd/MMMM/yyyy"}}</b></span><br>
-								<b>{{r.numero}}</b><br>
-								{{r.asunto}}
-							</td>
-							<td>
-								<div ng-show="r.turno">
-									Turno: <b>{{r.turno}}</b><br>
-									<i>{{r.indicaciont}}</i>
-									<div ng-show="r.urgente">
-										<span class="label label-danger">URGENTE</span>
-									</div>
-								</div>
-							</td>
+              <td>
+                <div>
+								{{r.turnado}}<br>
+								<b ng-show="r.indicacion">Indicación:</b><br>
+								{{r.indicacion}}
+							</div>
+              </td>
+              <td width="200px"></td>
 						</tr>
 					</tbody>
-
 				</table>
-				<b>Indicación:</b><br>
-				{{pr.indicacion}}
-			</div>
-			<div class="text-center firma">
-				<b>{{pr.turnado}}</b><br>
-				__________________________________________________________<br>
-				Nombre y firma de recibido
-			</div>
 		</div>
 	</div>
 </div>
 
-<div class="vale visible-print">
-		<img src="images/ivea.jpg" width="150px" class="pull-left">
-
-		<div class="turno">
-			<div class="text-center" id='titulo'>
-				<b>{{area}}</b><br>
-				CORRESPONDENCIA PARA SU ATENCIÓN Y/O SEGUIMIENTO<br>
-				<b>{{hoy | date:"dd/MMMM/yyyy"}}</b>
-			</div>
-			<p></p>
-			<div class="tabla">
-				<table class="table table-bordered">
-					<thead>
-						<tr>
-							<th>ID</th>
-							<th width="75px">Recepción</th>
-							<th>Remitente</th>
-							<th>Información del documento</th>
-							<th>Información del turno</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr ng-repeat="r in print.selected">
-							<td>{{r.id}}</td>
-							<td>{{r.fechaRecepcion | dateToISO | date:"dd/MMMM/yyyy hh:mm a"}}</td>
-							<td>
-								<b>{{r.envia}}</b>,<br>
-								{{r.cargo}}<br>
-								{{r.dependencia}}
-							</td>
-							<td>
-								<span class="text-muted">{{tipo[r.tipoDoc]}} <b>{{r.fechaDocumento | date:"dd/MMMM/yyyy"}}</b></span><br>
-								<b>{{r.numero}}</b><br>
-								{{r.asunto}}
-							</td>
-							<td>
-								<div ng-show="r.turno">
-									Turno: <b>{{r.turno}}</b><br>
-									<i>{{r.indicaciont}}</i>
-									<div ng-show="r.urgente">
-										<span class="label label-danger">URGENTE</span>
-									</div>
-								</div>
-							</td>
-						</tr>
-					</tbody>
-
-				</table>
-				<b>Indicación:</b><br>
-				{{pr.indicacion}}
-			</div>
-			<div class="text-center firma">
-				<b>{{pr.turnado}}</b><br>
-				__________________________________________________________<br>
-				Nombre y firma de recibido
-			</div>
-		</div>
-	</div>
-</div>
 
 <!-- Modal -->
 <div class="modal fade" id="detalles" tabindex="-1" role="dialog">

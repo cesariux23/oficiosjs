@@ -16,8 +16,8 @@
     <!-- endbuild -->
     <!-- build:css({.tmp,app}) styles/main.css -->
     <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/spinner.css" />
     <link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.css" />
-    <link rel="stylesheet" href="bower_components/angular-sham-spinner/angular-sham-spinner.css"/>
     <!-- endbuild -->
 </head>
 <body ng-app="oficiosApp">
@@ -26,17 +26,17 @@
           <![endif]-->
 
           <!-- Add your site or application content here -->
-          <sham-spinner text="Cargando..."></sham-spinner>
+          <sham-spinner text="Procesando..."></sham-spinner>
           <div ng-controller='sesionCtrl'>
             <div class="header">
-                <img id='logo-sev' class="hidden-print"  src="images/sev.jpg" width="220px">
-                <img id='logo-ivea' src="images/ivea.jpg" width="220px">
-                <div id="info" class="hidden-print">
-                    <h3 id="logo-app">Administración de Documentación</h3>
+
+                <div id="info" class="hidden-print pull-right" ng-if="user">
+                    <h3 id="logo-app">DOCUMENTACIÓN</h3>
                     <p ng-show="user.data.area">{{user.data.area.area}}</p>
                     <p  ng-show="!user.data.area">DIRECCIÓN GENERAL</p>
                     <span class="text-muted" ng-show="user.data.depto">{{user.data.depto.departamento}}
                 </div>
+                <img id='logo-ivea' class="hidden-xs hidden-sm" src="images/ivea.jpg">
             </div><!-- header -->
 
 
@@ -55,6 +55,7 @@
 
                 <!-- Collect the nav links, forms, and other content for toggling -->
                 <div class="collapse navbar-collapse navbar-ex1-collapse">
+
                     <p class="navbar-text user-info" ng-show="user.data"><i class="fa fa-user"></i> {{user.data.nombre}}</p>
                     <ul class="nav navbar-nav" ng-show="user.isLogged && user.data.cambioContra=='1'">
                         <li class="dropdown pagekey pagekey_E" ng-show="user.data.area.emision">
@@ -107,8 +108,13 @@
             <div class="contenedor" ng-view=""/>
         </div>
         <div class="footer hidden-print">
-        <div class="pull-right">
-            Desarrollado en <b>DG-SA-DTI</b>, 2015
+        <div class="pull-right text-right">
+          Desarrollado por:
+          <br>
+          <b>SA / Departamento de Tecnologías de la Información
+            <br>
+            <a href="https://github.com/cesariux23"><span class="fa fa-github"></span> cesariux23</a>
+          </b>
         </div>
         <b>Instituto Veracruzano de Educación para los Adultos.</b> <br>
         Av. de las Américas N° 270 Col. María Esther CP. 91030. Xalapa, Ver.<br>
@@ -159,7 +165,6 @@
         <script src="scripts/services/catalogos.js"></script>
         <script src="scripts/controllers/turno/destinatarios.js"></script>
         <script src="bower_components/angular-sham-spinner/angular-sham-spinner.js"></script>
-        <script src="bower_components/checklist-model/checklist-model.js"></script>
         <script src="scripts/services/seguimiento.js"></script>
         <!-- endbuild -->
 

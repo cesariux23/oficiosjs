@@ -27,7 +27,7 @@ angular.module('oficiosApp')
     if(data.idArea=="3")
       user.home="/turno";
     else
-      user.home="/";
+      user.home="/emision";
 
     $cookieStore.put('userHome', user.home);
   }

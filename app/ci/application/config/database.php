@@ -48,11 +48,11 @@
 $active_group = 'default';
 $active_record = TRUE;
 
-$db['default']['hostname'] = 'localhost';
+$db['default']['hostname'] = '192.168.30.248';
 $db['default']['username'] = 'root';
-$db['default']['password'] = '1234';
+$db['default']['password'] = 'ive@2017';
 $db['default']['database'] = 'iveaedu_documentacion';
-$db['default']['dbdriver'] = 'mysql';
+$db['default']['dbdriver'] = 'mysqli';
 $db['default']['dbprefix'] = '';
 $db['default']['pconnect'] = TRUE;
 $db['default']['db_debug'] = TRUE;

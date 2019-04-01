@@ -31,14 +31,9 @@ angular
     controller: 'EmisionNuevoCtrl',
     pageKey:'E'
   })
-  .when('/recepcion/general', {
+  .when('/recepcion', {
     templateUrl: 'views/recepcion.html',
     controller: 'RecepcionCtrl',
-    pageKey:'R'
-  })
-  .when('/recepcion', {
-    templateUrl: 'views/recepcion/index.html',
-    controller: 'RecepcionIndexCtrl',
     pageKey:'R'
   })
   .when('/turno', {
@@ -92,7 +87,7 @@ angular
     pageKey:'T'
   })
   .otherwise({
-    redirectTo: '/'
+    redirectTo: '/emision/'
   });
 })
 .factory("Flash", function($rootScope){
